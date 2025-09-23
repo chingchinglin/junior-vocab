@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vocabulary MVP v2.8 — Standalone</title>
+    <!-- 樣式：Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React 18 UMD + Babel Standalone（可在瀏覽器即時編譯 JSX）-->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel" data-presets="env,react">
+      // ====== Standalone 版：使用全域 React，而非 import ======
+      const { useEffect, useMemo, useRef, useState } = React;
+
+      // ---- Tiny hash router ----
+      const useHashRoute = () => {
+        const [hash, setHash] = useState(() => window.location.hash || "#/");
+        useEffect(() => {
+          const onHash = () => setHash(window.location.hash || "#/");
+          window.addEventListener("hashchange", onHash);
+          return () => window.removeEventListener("hashchange", onHash);
+        }, []);
+        const push = (h) => { if (h !== window.location.hash) window.location.hash = h; };
+        return { hash, push };
+      };
+
+      // ---- Constants ----
+      const POS_LABEL = { noun: "名詞", verb: "動詞", adjective: "形容詞", adverb: "副詞", pronoun: "代名詞", preposition: "介系詞", conjunction: "連接詞", other: "其他" };
+      const ALL_POS = Object.keys(POS_LABEL);
+      const LS = { favorites: "mvp_vocab_favorites", dataset: "mvp_vocab_dataset_v28" };
+
+      // ---- Web Speech TTS ----
+      const speak = (text) => { if (!("speechSynthesis" in window)) return; const u = new SpeechSynthesisUtterance(text); u.lang = "en-US"; window.speechSynthesis.speak(u); };
+
+      // ---- UI atoms ----
+      const Button = ({ children, onClick, variant = "primary", type = "button", className = "" }) => {
+        const base = "px-4 py-2 rounded-xl font-medium shadow hover:shadow-md transition";
+        const map = { primary: "bg-indigo-600 text-white hover:bg-indigo-700", ghost: "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50", danger: "bg-rose-600 text-white hover:bg-rose-700" };
+        return <button type={type} onClick={onClick} className={`${base} ${map[variant]} ${className}`}>{children}</button>;
+      };
+      const Card = ({ children, onClick }) => (
+        <div onClick={onClick} className="cursor-pointer rounded-2xl bg-white/80 shadow p-5 hover:shadow-lg transition">{children}</div>
+      );
+
+      // ---- Seeds ----
+      const baseWordList = `able, about, above, abroad, absent, accept, accident, across, act, action, active, activity, actor, actress, actually, add, address, admire, adult, advertisement, advice, advise, affect, afraid, after, afternoon, again, against, age, ago, agree, agreement, ahead, aim, air, airplane, airport, alarm, album, algebra, alike, alive, all, allow, almost, alone, along, aloud, already, also, altogether, always, ambulance, among, ancient, angel, anger, angry, animal, ankle, another, answer, ant, any, anyone, anything, anywhere, apartment, apologize, app, appear, apple, appreciate, April, area, argue, arm, armchair, army, around, arrange, arrive, art, artist, as, ask, asleep, assistant, assume, astronomy, attack, attention, attitude, August, aunt, autumn, available, avoid, away, baby`;
+      const seedNouns = ["accident","act","action","activity","actor","actress","adult","advertisement","album","ambulance","animal","ankle","answer","ant","anything","apartment","app","apple","airport","alarm","astronomy","attention","attitude","August","aunt","autumn","baby"];
+      const seedVerbs = ["accept","add","admire","advise","affect","agree","allow","apologize","appear","appreciate","argue","arrange","arrive","ask","assume","attack","avoid"];
+      const seedAdjectives = ["able","absent","active","afraid","alike","alive","all","another","ancient","angry","any","asleep","available"];
+      const seedAdverbs = ["above","abroad","actually","again","ahead","alike","almost","alone","along","aloud","already","also","altogether","always","anywhere","away"];
+      const seedPrepositions = ["about","above","across","against","along","among","around","as","after"];
+      const seedConjunctions = ["after","as"];
+
+      // ---- Helpers ----
+      const exampleFor = (word, pos) => {
+        const w = String(word).toLowerCase();
+        const aAn = /^[aeiou]/i.test(w) ? "an" : "a";
+        if (pos === "verb") return `They ${w} every day.`;
+        if (pos === "adjective") return `It is ${w}.`;
+        if (pos === "adverb") return `He speaks ${w}.`;
+        if (pos === "preposition") return `We talked ${w} the plan.`;
+        if (pos === "conjunction") return `I left ${w} the rain started.`;
+        if (pos === "pronoun") return `${w} is here.`;
+        return `This is ${aAn} ${w}.`;
+      };
+      const translationFor = (word, pos) => {
+        const map = {verb:"動詞", adjective:"形容詞", adverb:"副詞", preposition:"介系詞", conjunction:"連接詞", pronoun:"代名詞"};
+        return `（${map[pos]||"名詞/其他"}）${word}：示例譯意占位。`;
+      };
+      const baseMapPos = (w) => { const t=new Set(); if (seedNouns.includes(w)) t.add("noun"); if (seedVerbs.includes(w)) t.add("verb"); if (seedAdjectives.includes(w)) t.add("adjective"); if (seedAdverbs.includes(w)) t.add("adverb"); if (seedPrepositions.includes(w)) t.add("preposition"); if (seedConjunctions.includes(w)) t.add("conjunction"); if (!t.size) t.add("other"); return Array.from(t); };
+      const makeBaseDataset = () => Array.from(new Set(baseWordList.split(',').map(s=>s.trim()))).map((w,i)=>({ id:i+1, english_word:w, kk_phonetic:"", chinese_definition:"（等待充實定義）", posTags:baseMapPos(w), basic_pos:baseMapPos(w).join(', '), grammar_main_category:baseMapPos(w)[0], grammar_sub_category:"", grammar_function:"", applicable_sentence_pattern:"", example_sentence:exampleFor(w, baseMapPos(w)[0]), example_translation:translationFor(w, baseMapPos(w)[0]), word_audio_path:"", example_audio_path:"" }));
+
+      const normalizePOS = (raw) => { const s=String(raw||"").toLowerCase(); if (s.includes("代名") || s.includes("pronoun")) return "pronoun"; if (s.includes("副詞") || s.includes("adv")) return "adverb"; if (s.includes("形容") || s.includes("adj")) return "adjective"; if (s.includes("動詞") || s.includes("verb") || s==="v") return "verb"; if (s.includes("名詞") || s.includes("noun") || s==="n") return "noun"; if (s.includes("介系") || s.includes("preposition") || s.includes("prep")) return "preposition"; if (s.includes("連接") || s.includes("conjunction") || s.includes("conj")) return "conjunction"; return "other"; };
+
+      // split with multiple delimiters — 用正則處理空白/標點，避免把實體 \n/\r/\t 放進字面量
+      const multiSplit = (text) => {
+        const out = []; let token = ""; const str = String(text);
+        const isDelim = (ch) => /[\s,;\/，、]/.test(ch); // \s covers space, tab, \n, \r
+        for (let i=0; i<str.length; i++) {
+          const ch = str[i];
+          if (isDelim(ch)) { if (token) out.push(token); token = ""; } else { token += ch; }
+        }
+        if (token) out.push(token);
+        return out;
+      };
+
+      // Minimal CSV parser (handles quotes, commas, LF/CRLF)
+      const parseCSV = (text) => {
+        const rows = [];
+        let i=0, cur='', inQ=false, row=[];
+        const pushCell=()=>{ row.push(cur); cur=''; };
+        const pushRow=()=>{ rows.push(row); row=[]; };
+        while(i<text.length){
+          const ch=text[i];
+          if(ch==='"') { if(inQ && text[i+1]==='"'){ cur+='"'; i+=2; continue; } inQ=!inQ; i++; continue; }
+          if(!inQ && ch===','){ pushCell(); i++; continue; }
+          if(!inQ && ch==='\n'){ pushCell(); pushRow(); i++; continue; }
+          if(!inQ && ch==='\r' && text[i+1]==='\n'){ pushCell(); pushRow(); i+=2; continue; }
+          cur+=ch; i++;
+        }
+        if(cur.length||row.length){ pushCell(); pushRow(); }
+        if(!rows.length) return [];
+        const headers=rows[0].map(h=>h.trim());
+        return rows.slice(1).map(cols=>{ const obj={}; for(let k=0;k<headers.length;k++){ obj[headers[k]]=(cols[k]||'').trim(); } return obj; });
+      };
+
+      // ---- Grammar defaults (auto-fill when empty) ----
+      const ADV_FREQUENCY = new Set(['always','usually','often','sometimes','seldom','rarely','never','again']);
+      const ADV_DEGREE    = new Set(['very','quite','too','enough','almost','altogether']);
+      const ADV_PLACE     = new Set(['here','there','above','below','abroad','anywhere','away','around','along','ahead']);
+      const ADV_TIME      = new Set(['already','now','today','yesterday','tonight','soon']);
+      const ADV_MANNER    = new Set(['aloud','alone']);
+
+      const grammarDefaults = (word, pos, subcat='') => {
+        const w = String(word);
+        const lw = w.toLowerCase();
+        const s = String(subcat||'');
+        let func = '', patt = '';
+        if (pos === 'pronoun') {
+          if (s.includes('主格')) { func = '作主詞（Subject）'; patt = `${w} + V ...`; }
+          else if (s.includes('受格')) { func = '作受詞（Object）'; patt = `S + V + ${w}`; }
+          else if (s.includes('所有格形容')) { func = '修飾名詞（所有格形容詞）'; patt = `${w} + N`; }
+          else if (s.includes('所有格')) { func = '代替名詞片語（所有格代名詞）'; patt = `S + be + ${w}`; }
+          else if (s.includes('反身')) { func = '反身受詞／強調'; patt = `S + V + ${w}`; }
+          else { func = '代替名詞（泛指）'; patt = `${w} + V ... / S + V + ${w}`; }
+        }
+        else if (pos === 'adverb') {
+          if (ADV_FREQUENCY.has(lw)) { func = '頻率副詞：修飾動詞（be/助動詞之後、一般動詞之前）'; patt = 'S + (助動詞) + [頻率副詞] + V ... / be + [頻率副詞]'; }
+          else if (ADV_DEGREE.has(lw)) { func = '程度副詞：修飾形容詞/副詞'; patt = '[程度副詞] + Adj/Adv'; }
+          else if (ADV_PLACE.has(lw)) { func = '地點/方向副詞：常置句末或動詞後'; patt = 'S + V + (O) + [地點副詞]'; }
+          else if (ADV_TIME.has(lw)) { func = '時間副詞：句末或句首'; patt = '[時間副詞], S + V ... / S + V + [時間副詞]'; }
+          else if (ADV_MANNER.has(lw)) { func = '方式副詞：說明動作方式'; patt = 'S + V + [方式副詞]'; }
+          else if (lw === 'also') { func = '添加副詞：也、還'; patt = 'S + also + V / be + also'; }
+          else { func = '副詞：修飾動詞、形容詞或整句'; patt = 'S + V + (O) + Adv / Adv + 句子'; }
+        }
+        return { grammar_function: func, sentence_pattern: patt };
+      };
+
+      // ---- Dataset + Import + Reset ----
+      const useDataset = () => {
+        const [data, setData] = useState(() => { try{ const raw=localStorage.getItem(LS.dataset); if(raw) return JSON.parse(raw);}catch{} return makeBaseDataset(); });
+        useEffect(()=>{ try{ localStorage.setItem(LS.dataset, JSON.stringify(data)); }catch{} }, [data]);
+
+        const addItems = (items) => {
+          let stats = { added:0, merged:0, tagsAdded:{}, totalBefore:data.length, totalAfter:0 };
+          setData(cur=>{
+            const next=[...cur]; const byKey=new Map(cur.map(w=>[w.english_word.toLowerCase(), w])); let idMax=cur.reduce((m,w)=>Math.max(m, Number(w.id)||0),0);
+            const ensureTag=(obj, tag)=>{ const t=normalizePOS(tag); if(!obj.posTags) obj.posTags=[]; if(!obj.posTags.includes(t)){ obj.posTags=[...obj.posTags, t]; obj.basic_pos=obj.posTags.join(', '); stats.tagsAdded[t]=(stats.tagsAdded[t]||0)+1; } };
+            for(const raw of (Array.isArray(items)?items:[])){
+              const word=(raw.english_word||raw.word||raw["英文"]||"").trim(); if(!word) continue;
+              const buckets=[]; const fields=[raw.posTags, raw.basic_pos, raw.grammar_main_category, raw["詞性"], raw["詞性分類"], raw.pos];
+              for(const f of fields){ if(!f) continue; if(Array.isArray(f)) buckets.push(...f); else buckets.push(...multiSplit(f)); }
+              let tags=Array.from(new Set(buckets.map(normalizePOS).filter(Boolean))); if(!tags.length) tags=["other"];
+              const ex=byKey.get(word.toLowerCase());
+              if(ex){
+                for(const t of tags) ensureTag(ex,t);
+                if(!ex.kk_phonetic && raw.kk_phonetic) ex.kk_phonetic=raw.kk_phonetic;
+                if(!ex.chinese_definition && (raw.chinese_definition||raw["中譯"])) ex.chinese_definition=raw.chinese_definition||raw["中譯"];
+                if(!ex.example_sentence && (raw.example_sentence||raw["例句"])) ex.example_sentence=raw.example_sentence||raw["例句"];
+                if(!ex.example_translation && (raw.example_translation||raw["翻譯"])) ex.example_translation=raw.example_translation||raw["翻譯"];
+                if(!ex.grammar_sub_category && (raw.grammar_sub_category||raw["詞性分類"])) ex.grammar_sub_category=raw.grammar_sub_category||raw["詞性分類"];
+                if(!ex.grammar_function && (raw.grammar_function||raw["語法功能"])) ex.grammar_function=raw.grammar_function||raw["語法功能"];
+                if(!ex.applicable_sentence_pattern && (raw.applicable_sentence_pattern||raw["句型"])) ex.applicable_sentence_pattern=raw.applicable_sentence_pattern||raw["句型"];
+                stats.merged++;
+              }
+              else {
+                idMax++; const first=tags[0];
+                const obj={ id:idMax, english_word:word,
+                  kk_phonetic:raw.kk_phonetic||raw.KK||raw["KK音標"]||"",
+                  chinese_definition:raw.chinese_definition||raw["中譯"]||"",
+                  posTags:[...tags], basic_pos:tags.join(', '),
+                  grammar_main_category:normalizePOS(first),
+                  grammar_sub_category:raw.grammar_sub_category||raw["詞性分類"]||"",
+                  grammar_function:raw.grammar_function||raw["語法功能"]||"",
+                  applicable_sentence_pattern:raw.applicable_sentence_pattern||raw["句型"]||"",
+                  example_sentence:raw.example_sentence||raw["例句"]||exampleFor(word, first),
+                  example_translation:raw.example_translation||raw["翻譯"]||translationFor(word, first),
+                  word_audio_path:raw.word_audio_path||"", example_audio_path:raw.example_audio_path||"" };
+                next.push(obj); byKey.set(word.toLowerCase(), obj); stats.added++;
+              }
+            }
+            stats.totalAfter=next.length; return next;
+          });
+          return stats;
+        };
+
+        const reset = () => setData(makeBaseDataset());
+
+        return { data, addItems, reset };
+      };
+
+      // ---- Favorites ----
+      const useFavorites = () => { const [favorites, setFavorites] = useState(() => { try{ const raw=localStorage.getItem(LS.favorites); return raw?JSON.parse(raw):[];}catch{return [];} }); useEffect(()=>{ try{ localStorage.setItem(LS.favorites, JSON.stringify(favorites)); }catch{} }, [favorites]); return { favorites, toggle:(id)=>setFavorites(cur=>cur.includes(id)?cur.filter(x=>x!==id):[...cur,id]), remove:(id)=>setFavorites(cur=>cur.filter(x=>x!==id)), clear:()=>setFavorites([]) }; };
+
+      // ---- Importer (File + Drop + Paste) ----
+      const Importer = ({ onImport }) => {
+        const [msg, setMsg] = useState("");
+        const [paste, setPaste] = useState("");
+        const [dragOver, setDragOver] = useState(false);
+        const inputRef = useRef(null);
+
+        const posSummary = (stats) => Object.entries(stats.tagsAdded||{}).map(([k,v])=>`${POS_LABEL[k]||k}:${v}`).join('、');
+
+        const importText = async (rawText, hint) => {
+          const text = String(rawText||"").replace(/^\uFEFF/, "");
+          try { const json = JSON.parse(text); if (!Array.isArray(json)) throw new Error('not array'); const stats = onImport(json); setMsg(`已匯入 ${stats.added + stats.merged} 筆（${hint}JSON），新增單字 ${stats.added}，合併 ${stats.merged}${posSummary(stats)?`，新增標籤 ${posSummary(stats)}`:""}。`); return; } catch {}
+          const rows = parseCSV(text);
+          if (!rows.length) { setMsg("匯入失敗：內容不是有效的 JSON 或 CSV"); return; }
+          const items = rows.map((r)=>({
+            english_word:r["英文"]||r["english"]||r["word"]||r["Word"]||"",
+            kk_phonetic:r["KK音標"]||r["KK"]||r["phonetic"]||"",
+            chinese_definition:r["中譯"]||r["中文"]||r["definition_zh"]||"",
+            example_sentence:r["例句"]||r["sentence"]||"",
+            example_translation:r["翻譯"]||r["translation"]||"",
+            grammar_main_category:r["詞性"]||r["pos"]||r["詞性(POS)"]||r["詞性分類"]||"",
+            grammar_sub_category:r["詞性分類"]||r["subcat"]||"",
+            grammar_function:r["語法功能"]||r["grammar_function"]||"",
+            applicable_sentence_pattern:r["句型"]||r["sentence_pattern"]||r["applicable_sentence_pattern"]||""
+          }));
+          const stats = onImport(items);
+          setMsg(`已匯入 ${stats.added + stats.merged} 筆（${hint}CSV），新增單字 ${stats.added}，合併 ${stats.merged}${posSummary(stats)?`，新增標籤 ${posSummary(stats)}`:""}。`);
+        };
+
+        const onFile = async (file) => { if(!file) return; const text = await file.text(); await importText(text, '檔案/'); };
+        const onInputChange = async (e) => { const f=e.target.files?.[0]; await onFile(f); e.target.value = ""; };
+        const onDrop = async (e) => { e.preventDefault(); setDragOver(false); const f=e.dataTransfer.files?.[0]; await onFile(f); };
+
+        return (
+          <div className={`rounded-2xl border p-4 bg-white/60 ${dragOver? 'ring-2 ring-indigo-400':''}`}
+              onDragOver={(e)=>{e.preventDefault(); setDragOver(true);}}
+              onDragLeave={()=>setDragOver(false)}
+              onDrop={onDrop}>
+            <div className="font-semibold mb-2">資料匯入（JSON/CSV）</div>
+            <p className="text-sm text-gray-600 mb-3">三種方式：① 選擇檔案 ② 拖曳到此區 ③ 直接貼上文字</p>
+
+            <div className="flex items-center gap-3 mb-3">
+              <input ref={inputRef} type="file" accept="application/json,.json,.csv,text/csv,text/plain" className="hidden" onChange={onInputChange} />
+              <Button variant="ghost" onClick={()=>inputRef.current?.click()}>選擇 JSON 或 CSV 檔</Button>
+              <span className="text-xs text-gray-500">或拖曳檔案至此</span>
+            </div>
+
+            <div className="mt-2">
+              <textarea value={paste} onChange={(e)=>setPaste(e.target.value)} placeholder="或直接貼上 JSON / CSV 文字..." className="w-full h-28 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <div className="mt-2"><Button variant="ghost" onClick={()=>importText(paste, '貼上/')}>匯入貼上的內容</Button></div>
+            </div>
+
+            {msg && <div className="text-xs text-gray-500 mt-2">{msg}</div>}
+          </div>
+        );
+      };
+
+      // ---- Shell ----
+      const Shell = ({ children, onReset }) => (
+        <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+          <div className="max-w-5xl mx-auto px-4 py-6">
+            <header className="flex items-center justify-between mb-6">
+              <a href="#/" className="text-2xl font-bold tracking-tight">Vocabulary MVP v2.8</a>
+              <nav className="flex gap-2 items-center">
+                <a href="#/" className="px-3 py-2 rounded-lg hover:bg-gray-100">首頁</a>
+                <a href="#/favorites" className="px-3 py-2 rounded-lg hover:bg-gray-100">我的最愛</a>
+                <a href="#/quiz" className="px-3 py-2 rounded-lg hover:bg-gray-100">填空測驗</a>
+                <Button variant="ghost" onClick={onReset}>重置資料</Button>
+              </nav>
+            </header>
+            {children}
+            <footer className="mt-12 text-center text-xs text-gray-400">MVP demo • Local-only • v2.8（auto-grammar + importer fields + persistence + reset）</footer>
+          </div>
+        </div>
+      );
+
+      // ---- Pages ----
+      const Home = ({ push, data, onImport }) => {
+        const [q, setQ] = useState("");
+        const categories = useMemo(() => ALL_POS.map(k => ({ key:k, count: data.filter(w=> (w.posTags||[]).includes(k)).length })), [data]);
+        const filtered = useMemo(() => { const s=q.trim().toLowerCase(); if(!s) return data.slice(0,12); return data.filter(w=>w.english_word.toLowerCase().includes(s)).slice(0,20); }, [q, data]);
+        return (
+          <div>
+            <h1 className="text-3xl font-bold mb-2">文法分類</h1>
+            <p className="text-gray-600 mb-6">當前字彙：{data.length}。點分類或下方搜尋。</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {categories.map(c => (
+                <Card key={c.key} onClick={()=>push(`#/category/${c.key}`)}>
+                  <div className="text-sm text-gray-500">{c.count} 個詞</div>
+                  <div className="text-xl font-semibold">{POS_LABEL[c.key]}</div>
+                </Card>
+              ))}
+            </div>
+
+            <Importer onImport={onImport} />
+
+            <div className="mt-8 mb-3 flex items-center gap-3">
+              <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="搜尋單字..." className="w-full md:w-1/2 px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {filtered.map(w => (
+                <a key={w.id} href={`#/word/${w.id}`} className="block rounded-xl border p-3 hover:shadow">
+                  <div className="font-semibold">{w.english_word}</div>
+                  <div className="text-xs text-gray-500">{(w.posTags||[]).join(', ')}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      const CategoryList = ({ cat, data }) => {
+        const list = data.filter(w => (w.posTags||[]).includes(cat));
+        return (
+          <div>
+            <h1 className="text-2xl font-bold mb-4">{POS_LABEL[cat]}（{list.length}）</h1>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {list.map(w => (
+                <a key={w.id} href={`#/word/${w.id}`} className="block rounded-xl border p-3 hover:shadow">
+                  <div className="font-semibold">{w.english_word}</div>
+                  <div className="text-xs text-gray-500">{(w.posTags||[]).join(', ')}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      const WordDetail = ({ id, data, favoritesApi }) => {
+        const word = data.find(w => String(w.id) === String(id));
+        const [showTrans, setShowTrans] = useState(false);
+        const [selPos, setSelPos] = useState(word?.posTags?.[0] || "other");
+        if (!word) return <div>找不到單字。</div>;
+        const isFav = favoritesApi.favorites.includes(word.id);
+        const sentence = word.example_sentence && word.example_sentence.trim() ? word.example_sentence : exampleFor(word.english_word, selPos);
+        const trans = word.example_translation && word.example_translation.trim() ? word.example_translation : translationFor(word.english_word, selPos);
+        const auto = grammarDefaults(word.english_word, selPos, word.grammar_sub_category);
+        const gFunc = (word.grammar_function||"") || auto.grammar_function;
+        const gPattern = (word.applicable_sentence_pattern||"") || auto.sentence_pattern;
+        return (
+          <div>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-3xl font-bold">{word.english_word}</h1>
+              <div className="flex gap-2">
+                <Button variant={isFav?"danger":"primary"} onClick={()=>favoritesApi.toggle(word.id)}>{isFav?"移除最愛":"加入最愛"}</Button>
+                <Button variant="ghost" onClick={()=>speak(word.english_word)}>發音</Button>
+              </div>
+            </div>
+            <div className="mt-2 text-gray-600">詞性：{(word.posTags||[]).map(p=>POS_LABEL[p]||p).join('、')}</div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {(word.posTags||[]).map(p => (
+                <Button key={p} variant={p===selPos?"primary":"ghost"} onClick={()=>setSelPos(p)}>{POS_LABEL[p]||p}</Button>
+              ))}
+            </div>
+
+            <div className="mt-6 grid md:grid-cols-2 gap-4">
+              <div className="rounded-xl border p-4">
+                <div className="font-semibold mb-2">例句</div>
+                <p className="mb-2">{sentence}</p>
+                <div className="flex gap-2">
+                  <Button variant="ghost" onClick={()=>speak(sentence)}>朗讀例句</Button>
+                  <Button variant="ghost" onClick={()=>setShowTrans(s=>!s)}>{showTrans?"隱藏翻譯":"顯示翻譯"}</Button>
+                </div>
+                {showTrans && <p className="text-sm text-gray-500 mt-2">{trans}</p>}
+              </div>
+              <div className="rounded-xl border p-4">
+                <div className="font-semibold mb-2">文法</div>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>主分類：{POS_LABEL[selPos] || POS_LABEL[word.grammar_main_category] || "—"}</li>
+                  <li>子分類：{word.grammar_sub_category || "—"}</li>
+                  {gFunc && <li>語法功能：{gFunc}</li>}
+                  {gPattern && <li>句型：{gPattern}</li>}
+                </ul>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // --- Cloze helpers ---
+      const escapeForRegex = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const makeCloze = (sentence, answer) => {
+        const esc = escapeForRegex(answer);
+        const rx = new RegExp(`(^|[^A-Za-z])(${esc})(?=[^A-Za-z]|$)`, 'i');
+        return String(sentence).replace(rx, (m) => m.replace(new RegExp(esc, 'i'), '_____ '));
+      };
+
+      const FavoritesPage = ({ favoritesApi, data }) => {
+        const items = data.filter(w => favoritesApi.favorites.includes(w.id));
+        return (
+          <div>
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold">我的最愛（{items.length}）</h1>
+              <div className="flex gap-2">
+                <a href="#/quiz?source=favorites"><Button>開始測驗</Button></a>
+                {items.length>0 && <Button variant="ghost" onClick={favoritesApi.clear}>全部清除</Button>}
+              </div>
+            </div>
+            {items.length === 0 ? (
+              <p className="text-gray-600 mt-3">尚未加入任何單字。前往單字頁按「加入最愛」。</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+                {items.map(w => (
+                  <div key={w.id} className="rounded-xl border p-3">
+                    <a className="font-semibold hover:underline" href={`#/word/${w.id}`}>{w.english_word}</a>
+                    <div className="text-xs text-gray-500 mb-2">{(w.posTags||[]).join(', ')}</div>
+                    <Button variant="ghost" onClick={()=>favoritesApi.remove(w.id)}>移除</Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const QuizPage = ({ favoritesApi, hash, data }) => {
+        const params = useMemo(() => Object.fromEntries(new URLSearchParams((hash.split('?')[1]||''))), [hash]);
+        const source = params.source || 'all';
+        const pool = useMemo(() => { if (source === 'favorites') { const ids=new Set(favoritesApi.favorites); const arr=data.filter(w=>ids.has(w.id)); return arr.length?arr:data; } return data; }, [source, favoritesApi.favorites, data]);
+        const [idx, setIdx] = useState(0); const [score, setScore] = useState(0);
+        const [input, setInput] = useState(""); const [showAns, setShowAns] = useState(false);
+        const item = pool[idx % pool.length];
+        const sentence = item.example_sentence || exampleFor(item.english_word, (item.posTags||[])[0]);
+        const cloze = makeCloze(sentence, item.english_word);
+        const trySubmit = () => { const ok = input.trim().toLowerCase() === item.english_word.toLowerCase(); if (ok) setScore(s=>s+1); setShowAns(true); };
+        const next = () => { setIdx(i=>i+1); setInput(""); setShowAns(false); };
+        return (
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-2xl font-bold">填空測驗</h1>
+              <div className="text-sm text-gray-600">來源：{source === 'favorites'? '我的最愛':'全部單字'}</div>
+            </div>
+            <div className="rounded-2xl border p-5">
+              <div className="text-gray-500 text-sm mb-2">第 {idx+1} 題／{pool.length}｜分數 {score}</div>
+              <p className="text-lg mb-4">{cloze}</p>
+              <input value={input} onChange={(e)=>setInput(e.target.value)} placeholder="輸入答案" className="w-full md:w-1/2 px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <div className="mt-3 flex gap-2">
+                <Button onClick={trySubmit}>提交</Button>
+                <Button variant="ghost" onClick={()=>setShowAns(s=>!s)}>{showAns?"隱藏答案":"提示/答案"}</Button>
+                <Button variant="ghost" onClick={next}>下一題</Button>
+              </div>
+              {showAns && (
+                <div className="mt-3 text-sm">
+                  <div>正確答案：<span className="font-semibold">{item.english_word}</span></div>
+                  <div className="text-gray-600">提示（詞性）：{(item.posTags||[]).join(', ')}</div>
+                  <div className="text-gray-600">中文：{item.example_translation || translationFor(item.english_word, (item.posTags||[])[0])}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      // ---- Self tests ----
+      const SelfTests = ({ data }) => {
+        const [open, setOpen] = useState(false);
+        const results = useMemo(() => {
+          const r = [];
+          const rows1 = parseCSV('英文,中譯\n"a,b",好\n'); r.push({name:'CSV quoted comma (LF)', pass: rows1.length===1 && rows1[0].英文==='a,b'});
+          const rows2 = parseCSV('英文,中譯\r\n"a,b",好\r\n'); r.push({name:'CSV quoted comma (CRLF)', pass: rows2.length===1 && (rows2[0].中文==='好' || rows2[0].中譯==='好')});
+          const after = data.find(w=>w.english_word.toLowerCase()==='after'); r.push({name:'Multi-POS seed union', pass: !!(after && after.posTags.includes('preposition') && after.posTags.includes('conjunction'))});
+          const c1 = makeCloze('They add values.', 'add'); r.push({name:'Cloze basic', pass: /_____/.test(c1)});
+          const c2 = makeCloze('C++ is powerful.', 'C++'); r.push({name:'Cloze escapes symbols', pass: /_____/.test(c2)});
+          r.push({name:'POS normalize pronoun', pass: normalizePOS('代名詞')==='pronoun'});
+          r.push({name:'POS normalize adv.', pass: normalizePOS('adv.')==='adverb'});
+          const ms = multiSplit('a，b\nc'); r.push({name:'multiSplit Chinese & LF', pass: ms.length===3 && ms[0]==='a' && ms[1]==='b' && ms[2]==='c'});
+          const g1 = grammarDefaults('we','pronoun','主格代名詞'); r.push({name:'Grammar default pronoun subj.', pass: /主詞/.test(g1.grammar_function) && /we/.test(g1.sentence_pattern)});
+          const g2 = grammarDefaults('always','adverb',''); r.push({name:'Grammar default adverb frequency', pass: /頻率/.test(g2.grammar_function)});
+          return r;
+        }, [data]);
+        const passCount = results.filter(x=>x.pass).length;
+        return (
+          <div className="mt-6">
+            <button className="text-xs text-indigo-600 underline" onClick={()=>setOpen(o=>!o)}>{open?"隱藏開發測試":"顯示開發測試"}（{passCount}/{results.length} 通過）</button>
+            {open && (<ul className="text-xs text-gray-600 list-disc pl-5 mt-2">{results.map((t,i)=>(<li key={i}>{t.name}: {t.pass?"PASS":"FAIL"}</li>))}</ul>)}
+          </div>
+        );
+      };
+
+      // ---- Root ----
+      function App(){
+        const { hash, push } = useHashRoute();
+        const favoritesApi = useFavorites();
+        const { data, addItems, reset } = useDataset();
+        const [route, param] = useMemo(() => { const h=hash.replace(/^#\//, ""); if(!h) return ["home", null]; const [p0,p1]=h.split("?")[0].split("/"); if(p0==="") return ["home", null]; if(p0==="category") return ["category", p1]; if(p0==="word") return ["word", p1]; if(p0==="favorites") return ["favorites", null]; if(p0==="quiz") return ["quiz", null]; return ["home", null]; }, [hash]);
+        return (
+          <Shell onReset={reset}>
+            {route === "home" && <><Home push={push} data={data} onImport={addItems} /><SelfTests data={data} /></>}
+            {route === "category" && <CategoryList cat={param} data={data} />}
+            {route === "word" && <WordDetail id={param} data={data} favoritesApi={favoritesApi} />}
+            {route === "favorites" && <FavoritesPage favoritesApi={favoritesApi} data={data} />}
+            {route === "quiz" && <QuizPage favoritesApi={favoritesApi} hash={hash} data={data} />}
+          </Shell>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>

@@ -3,22 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vocabulary MVP v2.8 — Standalone</title>
-    <!-- 樣式：Tailwind Play CDN -->
+    <title>Vocabulary MVP v3.0 — Standalone</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React 18 UMD + Babel Standalone（可在瀏覽器即時編譯 JSX）-->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
   <body class="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
     <div id="root"></div>
-
-    <script type="text/babel" data-presets="env,react">
-      // ====== Standalone 版：使用全域 React，而非 import ======
+    <script type="text/babel" data-presets="env,react,typescript">
       const { useEffect, useMemo, useRef, useState } = React;
 
-      // ---- Tiny hash router ----
       const useHashRoute = () => {
         const [hash, setHash] = useState(() => window.location.hash || "#/");
         useEffect(() => {
@@ -30,25 +25,40 @@
         return { hash, push };
       };
 
-      // ---- Constants ----
-      const POS_LABEL = { noun: "名詞", verb: "動詞", adjective: "形容詞", adverb: "副詞", pronoun: "代名詞", preposition: "介系詞", conjunction: "連接詞", other: "其他" };
+      const POS_LABEL = {
+        noun: "名詞", verb: "動詞", adjective: "形容詞", adverb: "副詞",
+        pronoun: "代名詞", preposition: "介系詞", conjunction: "連接詞", other: "其他"
+      };
       const ALL_POS = Object.keys(POS_LABEL);
-      const LS = { favorites: "mvp_vocab_favorites", dataset: "mvp_vocab_dataset_v28" };
+      const LS = { favorites: "mvp_vocab_favorites", dataset: "mvp_vocab_dataset_v30", presetApplied: "mvp_vocab_preset_applied_v30" };
 
-      // ---- Web Speech TTS ----
-      const speak = (text) => { if (!("speechSynthesis" in window)) return; const u = new SpeechSynthesisUtterance(text); u.lang = "en-US"; window.speechSynthesis.speak(u); };
+      const speak = (text) => {
+        if (!("speechSynthesis" in window)) return;
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
+        window.speechSynthesis.speak(u);
+      };
 
-      // ---- UI atoms ----
       const Button = ({ children, onClick, variant = "primary", type = "button", className = "" }) => {
         const base = "px-4 py-2 rounded-xl font-medium shadow hover:shadow-md transition";
-        const map = { primary: "bg-indigo-600 text-white hover:bg-indigo-700", ghost: "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50", danger: "bg-rose-600 text-white hover:bg-rose-700" };
-        return <button type={type} onClick={onClick} className={`${base} ${map[variant]} ${className}`}>{children}</button>;
+        const map = {
+          primary: "bg-indigo-600 text-white hover:bg-indigo-700",
+          ghost: "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50",
+          danger: "bg-rose-600 text-white hover:bg-rose-700"
+        };
+        return (
+          <button type={type} onClick={onClick} className={`${base} ${map[variant]} ${className}`}>
+            {children}
+          </button>
+        );
       };
+
       const Card = ({ children, onClick }) => (
-        <div onClick={onClick} className="cursor-pointer rounded-2xl bg-white/80 shadow p-5 hover:shadow-lg transition">{children}</div>
+        <div onClick={onClick} className="cursor-pointer rounded-2xl bg-white/80 shadow p-5 hover:shadow-lg transition">
+          {children}
+        </div>
       );
 
-      // ---- Seeds ----
       const baseWordList = `able, about, above, abroad, absent, accept, accident, across, act, action, active, activity, actor, actress, actually, add, address, admire, adult, advertisement, advice, advise, affect, afraid, after, afternoon, again, against, age, ago, agree, agreement, ahead, aim, air, airplane, airport, alarm, album, algebra, alike, alive, all, allow, almost, alone, along, aloud, already, also, altogether, always, ambulance, among, ancient, angel, anger, angry, animal, ankle, another, answer, ant, any, anyone, anything, anywhere, apartment, apologize, app, appear, apple, appreciate, April, area, argue, arm, armchair, army, around, arrange, arrive, art, artist, as, ask, asleep, assistant, assume, astronomy, attack, attention, attitude, August, aunt, autumn, available, avoid, away, baby`;
       const seedNouns = ["accident","act","action","activity","actor","actress","adult","advertisement","album","ambulance","animal","ankle","answer","ant","anything","apartment","app","apple","airport","alarm","astronomy","attention","attitude","August","aunt","autumn","baby"];
       const seedVerbs = ["accept","add","admire","advise","affect","agree","allow","apologize","appear","appreciate","argue","arrange","arrive","ask","assume","attack","avoid"];
@@ -57,10 +67,43 @@
       const seedPrepositions = ["about","above","across","against","along","among","around","as","after"];
       const seedConjunctions = ["after","as"];
 
-      // ---- Helpers ----
+      const BUILTIN_PRESET = [
+        {english_word:'able', kk_phonetic:'/ˈeɪbəl/', chinese_definition:'(adj.) 有能力的', example_sentence:'He is able to solve the problem.', example_translation:'他有能力解決這個問題。', grammar_main_category:'adjective'},
+        {english_word:'about', kk_phonetic:'/əˈbaʊt/', chinese_definition:'(prep.) 有關', example_sentence:'This book is about history.', example_translation:'這本書是關於歷史的。', grammar_main_category:'preposition'},
+        {english_word:'above', kk_phonetic:'/əˈbʌv/', chinese_definition:'(adv.) 在上方', example_sentence:'The bird flew above the trees.', example_translation:'鳥從樹梢上飛過。', grammar_main_category:'adverb'},
+        {english_word:'abroad', kk_phonetic:'/əˈbrɔːd/', chinese_definition:'(adv.) 在國外', example_sentence:'She studied abroad last year.', example_translation:'她去年在國外念書。', grammar_main_category:'adverb'},
+        {english_word:'absent', kk_phonetic:'/ˈæbsənt/', chinese_definition:'(adj.) 缺席的', example_sentence:'He was absent from the meeting.', example_translation:'他缺席了會議。', grammar_main_category:'adjective'},
+        {english_word:'accept', kk_phonetic:'/əkˈsɛpt/', chinese_definition:'(v.) 接受', example_sentence:'They accepted the invitation.', example_translation:'他們接受了邀請。', grammar_main_category:'verb'},
+        {english_word:'accident', kk_phonetic:'/ˈæksɪdənt/', chinese_definition:'(n.) 意外', example_sentence:'The accident happened at night.', example_translation:'意外發生在晚上。', grammar_main_category:'noun'},
+        {english_word:'across', kk_phonetic:'/əˈkrɒs/', chinese_definition:'(prep.) 穿越', example_sentence:'We walked across the bridge.', example_translation:'我們穿過橋。', grammar_main_category:'preposition'},
+        {english_word:'act', kk_phonetic:'/ækt/', chinese_definition:'(n./v.) 行為／表演', example_sentence:'They act in school plays.', example_translation:'他們在學校戲劇中演出。', grammar_main_category:'noun'},
+        {english_word:'action', kk_phonetic:'/ˈækʃən/', chinese_definition:'(n.) 行動', example_sentence:'Action is needed now.', example_translation:'現在需要採取行動。', grammar_main_category:'noun'},
+        {english_word:'active', kk_phonetic:'/ˈæktɪv/', chinese_definition:'(adj.) 活躍的', example_sentence:'He leads an active life.', example_translation:'他過著積極的生活。', grammar_main_category:'adjective'},
+        {english_word:'activity', kk_phonetic:'/ækˈtɪvəti/', chinese_definition:'(n.) 活動', example_sentence:'Outdoor activity is fun.', example_translation:'戶外活動很有趣。', grammar_main_category:'noun'},
+        {english_word:'actor', kk_phonetic:'/ˈæktər/', chinese_definition:'(n.) 男演員', example_sentence:'The actor won an award.', example_translation:'這位男演員得獎了。', grammar_main_category:'noun'},
+        {english_word:'actress', kk_phonetic:'/ˈæktrəs/', chinese_definition:'(n.) 女演員', example_sentence:'She is a famous actress.', example_translation:'她是位有名的女演員。', grammar_main_category:'noun'},
+        {english_word:'actually', kk_phonetic:'/ˈækʧuəli/', chinese_definition:'(adv.) 其實', example_sentence:'He actually agreed.', example_translation:'他其實同意了。', grammar_main_category:'adverb'},
+        {english_word:'add', kk_phonetic:'/æd/', chinese_definition:'(v.) 加上', example_sentence:'They add sugar to tea.', example_translation:'他們在茶裡加糖。', grammar_main_category:'verb'},
+        {english_word:'address', kk_phonetic:'/əˈdrɛs/', chinese_definition:'(n./v.) 地址；演說', example_sentence:'Please address the letter.', example_translation:'請在信上寫地址。', grammar_main_category:'noun'},
+        {english_word:'admire', kk_phonetic:'/ədˈmaɪər/', chinese_definition:'(v.) 欣賞', example_sentence:'We admire her courage.', example_translation:'我們欽佩她的勇氣。', grammar_main_category:'verb'},
+        {english_word:'adult', kk_phonetic:'/əˈdʌlt/', chinese_definition:'(n.) 成人', example_sentence:'Adults pay full price.', example_translation:'成人需付全票。', grammar_main_category:'noun'},
+        {english_word:'advertisement', kk_phonetic:'/ˌædvərˈtaɪzmənt/', chinese_definition:'(n.) 廣告', example_sentence:'The advertisement was catchy.', example_translation:'這則廣告很吸睛。', grammar_main_category:'noun'},
+        {english_word:'advice', kk_phonetic:'/ədˈvaɪs/', chinese_definition:'(n.) 建議', example_sentence:'She gave good advice.', example_translation:'她給了好的建議。', grammar_main_category:'noun'},
+        {english_word:'advise', kk_phonetic:'/ədˈvaɪz/', chinese_definition:'(v.) 建議', example_sentence:'I advise you to rest.', example_translation:'我建議你休息。', grammar_main_category:'verb'},
+        {english_word:'affect', kk_phonetic:'/əˈfɛkt/', chinese_definition:'(v.) 影響', example_sentence:'Weather affects mood.', example_translation:'天氣影響心情。', grammar_main_category:'verb'},
+        {english_word:'afraid', kk_phonetic:'/əˈfreɪd/', chinese_definition:'(adj.) 害怕的', example_sentence:'She is afraid of dogs.', example_translation:'她害怕狗。', grammar_main_category:'adjective'},
+        {english_word:'after', kk_phonetic:'/ˈæftər/', chinese_definition:'(prep./conj.) 之後', example_sentence:'We met after school.', example_translation:'我們放學後見面。', grammar_main_category:'preposition'},
+        {english_word:'afternoon', kk_phonetic:'/ˌæftərˈnun/', chinese_definition:'(n.) 下午', example_sentence:'See you this afternoon.', example_translation:'下午見。', grammar_main_category:'noun'},
+        {english_word:'again', kk_phonetic:'/əˈɡɛn/', chinese_definition:'(adv.) 再次', example_sentence:'Try again later.', example_translation:'稍後再試。', grammar_main_category:'adverb'},
+        {english_word:'against', kk_phonetic:'/əˈɡɛnst/', chinese_definition:'(prep.) 反對', example_sentence:'They voted against it.', example_translation:'他們投票反對。', grammar_main_category:'preposition'},
+        {english_word:'age', kk_phonetic:'/eɪdʒ/', chinese_definition:'(n.) 年齡', example_sentence:'What is your age?', example_translation:'你幾歲？', grammar_main_category:'noun'},
+        {english_word:'ago', kk_phonetic:'/əˈɡoʊ/', chinese_definition:'(adv.) 以前', example_sentence:'It happened long ago.', example_translation:'這件事很久以前發生。', grammar_main_category:'adverb'}
+      ];
+
       const exampleFor = (word, pos) => {
         const w = String(word).toLowerCase();
         const aAn = /^[aeiou]/i.test(w) ? "an" : "a";
+        if (pos === "adjective" && w === "alike") return "They look alike.";
         if (pos === "verb") return `They ${w} every day.`;
         if (pos === "adjective") return `It is ${w}.`;
         if (pos === "adverb") return `He speaks ${w}.`;
@@ -69,19 +112,137 @@
         if (pos === "pronoun") return `${w} is here.`;
         return `This is ${aAn} ${w}.`;
       };
+
       const translationFor = (word, pos) => {
-        const map = {verb:"動詞", adjective:"形容詞", adverb:"副詞", preposition:"介系詞", conjunction:"連接詞", pronoun:"代名詞"};
-        return `（${map[pos]||"名詞/其他"}）${word}：示例譯意占位。`;
+        const w = String(word);
+        const lw = w.toLowerCase();
+        const DICT_ZH = {
+          activity: "活動", action: "行動", actor: "男演員", actress: "女演員", add: "加",
+          about: "關於", above: "在上方", across: "穿越", against: "反對", along: "沿著", among: "在…之中", around: "在周圍", as: "作為/因為", after: "之後",
+          afraid: "害怕的", angry: "生氣的", able: "能夠的", active: "活躍的", alive: "活著的", alike: "相似",
+          animal: "動物", airport: "機場", apple: "蘋果", agree: "同意", arrive: "到達", ask: "詢問",
+          available: "可用的", away: "離開的", we: "我們", you: "你/你們", they: "他們"
+        };
+        const PREP_ZH = {
+          about: "關於", above: "在…上方", across: "穿越/橫越", against: "反對/靠著",
+          along: "沿著", among: "在…之中", around: "在…周圍/大約", as: "作為/因為", after: "在…之後"
+        };
+        if (pos === 'verb') {
+          const zh = DICT_ZH[lw] || w;
+          return `他們每天${zh}。`;
+        }
+        if (pos === 'adjective') {
+          if (lw === 'alike') return '他們看起來很相似。';
+          const zh = DICT_ZH[lw] || `${w}的`;
+          return `它很${zh.replace(/的$/,'的')}。`;
+        }
+        if (pos === 'adverb') {
+          const zh = DICT_ZH[lw] || w;
+          return `他說話${zh}地。`;
+        }
+        if (pos === 'pronoun') {
+          const zh = DICT_ZH[lw] || w;
+          return `${zh}在這裡。`;
+        }
+        if (pos === 'preposition') {
+          const zh = PREP_ZH[lw] || DICT_ZH[lw] || w; return `我們談論${zh}這個計畫。`;
+        }
+        if (pos === 'conjunction') return `我在${DICT_ZH[lw]||w}雨開始時離開。`;
+        const zh = DICT_ZH[lw] || w;
+        const isZh = /[\u4e00-\u9fff]/.test(zh);
+        return `這是${isZh?"":'一個'}${zh}。`;
       };
-      const baseMapPos = (w) => { const t=new Set(); if (seedNouns.includes(w)) t.add("noun"); if (seedVerbs.includes(w)) t.add("verb"); if (seedAdjectives.includes(w)) t.add("adjective"); if (seedAdverbs.includes(w)) t.add("adverb"); if (seedPrepositions.includes(w)) t.add("preposition"); if (seedConjunctions.includes(w)) t.add("conjunction"); if (!t.size) t.add("other"); return Array.from(t); };
-      const makeBaseDataset = () => Array.from(new Set(baseWordList.split(',').map(s=>s.trim()))).map((w,i)=>({ id:i+1, english_word:w, kk_phonetic:"", chinese_definition:"（等待充實定義）", posTags:baseMapPos(w), basic_pos:baseMapPos(w).join(', '), grammar_main_category:baseMapPos(w)[0], grammar_sub_category:"", grammar_function:"", applicable_sentence_pattern:"", example_sentence:exampleFor(w, baseMapPos(w)[0]), example_translation:translationFor(w, baseMapPos(w)[0]), word_audio_path:"", example_audio_path:"" }));
 
-      const normalizePOS = (raw) => { const s=String(raw||"").toLowerCase(); if (s.includes("代名") || s.includes("pronoun")) return "pronoun"; if (s.includes("副詞") || s.includes("adv")) return "adverb"; if (s.includes("形容") || s.includes("adj")) return "adjective"; if (s.includes("動詞") || s.includes("verb") || s==="v") return "verb"; if (s.includes("名詞") || s.includes("noun") || s==="n") return "noun"; if (s.includes("介系") || s.includes("preposition") || s.includes("prep")) return "preposition"; if (s.includes("連接") || s.includes("conjunction") || s.includes("conj")) return "conjunction"; return "other"; };
+      const posLabelFromArray = (arr=[]) => (arr||[]).map(p=>POS_LABEL[p]||p).join('、');
 
-      // split with multiple delimiters — 用正則處理空白/標點，避免把實體 \n/\r/\t 放進字面量
+      const wordToMarkdown = (word, selPos, extras={}) => {
+        if (!word) return '';
+        const lines = [];
+        const title = (extras.title ?? word.english_word) || '';
+        lines.push(`## ${title}`.trim());
+
+        const baseInfo = [];
+        const kk = (extras.kk_phonetic ?? word.kk_phonetic) || '';
+        if (kk && kk.trim()) baseInfo.push(`- KK音標：${kk.trim()}`);
+        const posList = posLabelFromArray(word.posTags);
+        if (posList) baseInfo.push(`- 詞性：${posList}`);
+        if (baseInfo.length) {
+          lines.push(baseInfo.join('\n'));
+        }
+
+        const grammarLines = [];
+        const mainCatKey = selPos || word.grammar_main_category;
+        const mainCatLabel = POS_LABEL[mainCatKey] || POS_LABEL[word.grammar_main_category];
+        if (mainCatLabel) grammarLines.push(`- 主分類：${mainCatLabel}`);
+        const subcat = (extras.grammar_sub_category ?? word.grammar_sub_category) || '';
+        const gFunc = (extras.grammar_function ?? word.grammar_function) || '';
+        const gPattern = (extras.applicable_sentence_pattern ?? word.applicable_sentence_pattern) || '';
+        if (subcat && subcat.trim()) grammarLines.push(`- 子分類：${subcat.trim()}`);
+        if (gFunc && gFunc.trim()) grammarLines.push(`- 語法功能：${gFunc.trim()}`);
+        if (gPattern && gPattern.trim()) grammarLines.push(`- 句型：${gPattern.trim()}`);
+        if (grammarLines.length) {
+          lines.push('', '### 文法', grammarLines.join('\n'));
+        }
+
+        const sentenceBlock = [];
+        const exampleSentence = extras.example_sentence ?? word.example_sentence ?? '';
+        const exampleTranslation = extras.example_translation ?? word.example_translation ?? '';
+        if (exampleSentence && exampleSentence.trim()) sentenceBlock.push(`- 英文：${exampleSentence.trim()}`);
+        if (exampleTranslation && exampleTranslation.trim()) sentenceBlock.push(`- 中文：${exampleTranslation.trim()}`);
+        if (sentenceBlock.length) {
+          lines.push('', '### 例句', sentenceBlock.join('\n'));
+        }
+
+        return lines.join('\n');
+      };
+
+      const baseMapPos = (w) => {
+        const t=new Set();
+        if (seedNouns.includes(w)) t.add("noun");
+        if (seedVerbs.includes(w)) t.add("verb");
+        if (seedAdjectives.includes(w)) t.add("adjective");
+        if (seedAdverbs.includes(w)) t.add("adverb");
+        if (seedPrepositions.includes(w)) t.add("preposition");
+        if (seedConjunctions.includes(w)) t.add("conjunction");
+        if (!t.size) t.add("other");
+        return Array.from(t);
+      };
+
+      const makeBaseDataset = () => (
+        Array.from(new Set(baseWordList.split(',').map(s=>s.trim())))
+          .map((w,i)=>({
+            id:i+1,
+            english_word:w,
+            kk_phonetic:"",
+            chinese_definition:"（等待充實定義）",
+            posTags:baseMapPos(w),
+            basic_pos:baseMapPos(w).join(', '),
+            grammar_main_category:baseMapPos(w)[0],
+            grammar_sub_category:"",
+            grammar_function:"",
+            applicable_sentence_pattern:"",
+            example_sentence:exampleFor(w, baseMapPos(w)[0]),
+            example_translation:translationFor(w, baseMapPos(w)[0]),
+            word_audio_path:"",
+            example_audio_path:""
+          }))
+      );
+
+      const normalizePOS = (raw) => {
+        const s=String(raw||"").toLowerCase();
+        if (s.includes("代名") || s.includes("pronoun")) return "pronoun";
+        if (s.includes("副詞") || s.includes("adv")) return "adverb";
+        if (s.includes("形容") || s.includes("adj")) return "adjective";
+        if (s.includes("動詞") || s.includes("verb") || s==="v") return "verb";
+        if (s.includes("名詞") || s.includes("noun") || s==="n") return "noun";
+        if (s.includes("介系") || s.includes("preposition") || s.includes("prep")) return "preposition";
+        if (s.includes("連接") || s.includes("conjunction") || s.includes("conj")) return "conjunction";
+        return "other";
+      };
+
       const multiSplit = (text) => {
         const out = []; let token = ""; const str = String(text);
-        const isDelim = (ch) => /[\s,;\/，、]/.test(ch); // \s covers space, tab, \n, \r
+        const isDelim = (ch) => /[\s,;\/，、]/.test(ch);
         for (let i=0; i<str.length; i++) {
           const ch = str[i];
           if (isDelim(ch)) { if (token) out.push(token); token = ""; } else { token += ch; }
@@ -90,7 +251,6 @@
         return out;
       };
 
-      // Minimal CSV parser (handles quotes, commas, LF/CRLF)
       const parseCSV = (text) => {
         const rows = [];
         let i=0, cur='', inQ=false, row=[];
@@ -106,18 +266,18 @@
         }
         if(cur.length||row.length){ pushCell(); pushRow(); }
         if(!rows.length) return [];
-        const headers=rows[0].map(h=>h.trim());
+        const headers=(rows[0]||[]).map(h=>h.trim());
+      
         return rows.slice(1).map(cols=>{ const obj={}; for(let k=0;k<headers.length;k++){ obj[headers[k]]=(cols[k]||'').trim(); } return obj; });
       };
 
-      // ---- Grammar defaults (auto-fill when empty) ----
       const ADV_FREQUENCY = new Set(['always','usually','often','sometimes','seldom','rarely','never','again']);
       const ADV_DEGREE    = new Set(['very','quite','too','enough','almost','altogether']);
       const ADV_PLACE     = new Set(['here','there','above','below','abroad','anywhere','away','around','along','ahead']);
       const ADV_TIME      = new Set(['already','now','today','yesterday','tonight','soon']);
       const ADV_MANNER    = new Set(['aloud','alone']);
 
-      const grammarDefaults = (word, pos, subcat='') => {
+      const grammarDefaults = (word: string, pos: string, subcat='') => {
         const w = String(word);
         const lw = w.toLowerCase();
         const s = String(subcat||'');
@@ -142,19 +302,24 @@
         return { grammar_function: func, sentence_pattern: patt };
       };
 
-      // ---- Dataset + Import + Reset ----
       const useDataset = () => {
-        const [data, setData] = useState(() => { try{ const raw=localStorage.getItem(LS.dataset); if(raw) return JSON.parse(raw);}catch{} return makeBaseDataset(); });
+        const [data, setData] = useState(() => {
+          try{ const raw=localStorage.getItem(LS.dataset); if(raw) return JSON.parse(raw);}catch{}
+          return makeBaseDataset();
+        });
         useEffect(()=>{ try{ localStorage.setItem(LS.dataset, JSON.stringify(data)); }catch{} }, [data]);
 
-        const addItems = (items) => {
+        const addItems = (items, opts) => {
+          const override = !!(opts && opts.overrideExamples);
           let stats = { added:0, merged:0, tagsAdded:{}, totalBefore:data.length, totalAfter:0 };
           setData(cur=>{
-            const next=[...cur]; const byKey=new Map(cur.map(w=>[w.english_word.toLowerCase(), w])); let idMax=cur.reduce((m,w)=>Math.max(m, Number(w.id)||0),0);
+            const next=[...cur];
+            const byKey=new Map(cur.map(w=>[w.english_word.toLowerCase(), w]));
+            let idMax=cur.reduce((m,w)=>Math.max(m, Number(w.id)||0),0);
             const ensureTag=(obj, tag)=>{ const t=normalizePOS(tag); if(!obj.posTags) obj.posTags=[]; if(!obj.posTags.includes(t)){ obj.posTags=[...obj.posTags, t]; obj.basic_pos=obj.posTags.join(', '); stats.tagsAdded[t]=(stats.tagsAdded[t]||0)+1; } };
             for(const raw of (Array.isArray(items)?items:[])){
               const word=(raw.english_word||raw.word||raw["英文"]||"").trim(); if(!word) continue;
-              const buckets=[]; const fields=[raw.posTags, raw.basic_pos, raw.grammar_main_category, raw["詞性"], raw["詞性分類"], raw.pos];
+        const buckets=[]; const fields=[raw.posTags, raw.basic_pos, raw.grammar_main_category, raw["詞性"], raw["詞性分類"], raw.pos];
               for(const f of fields){ if(!f) continue; if(Array.isArray(f)) buckets.push(...f); else buckets.push(...multiSplit(f)); }
               let tags=Array.from(new Set(buckets.map(normalizePOS).filter(Boolean))); if(!tags.length) tags=["other"];
               const ex=byKey.get(word.toLowerCase());
@@ -162,14 +327,14 @@
                 for(const t of tags) ensureTag(ex,t);
                 if(!ex.kk_phonetic && raw.kk_phonetic) ex.kk_phonetic=raw.kk_phonetic;
                 if(!ex.chinese_definition && (raw.chinese_definition||raw["中譯"])) ex.chinese_definition=raw.chinese_definition||raw["中譯"];
-                if(!ex.example_sentence && (raw.example_sentence||raw["例句"])) ex.example_sentence=raw.example_sentence||raw["例句"];
-                if(!ex.example_translation && (raw.example_translation||raw["翻譯"])) ex.example_translation=raw.example_translation||raw["翻譯"];
+                const rawSent = raw.example_sentence||raw["例句"]; const rawTrans = raw.example_translation||raw["翻譯"];
+                if(rawSent){ const autoSent = exampleFor(ex.english_word, (ex.posTags||[])[0]); if(override || !ex.example_sentence || ex.example_sentence===autoSent){ ex.example_sentence = rawSent; } }
+                if(rawTrans){ const autoTrans = translationFor(ex.english_word, (ex.posTags||[])[0]); if(override || !ex.example_translation || ex.example_translation===autoTrans){ ex.example_translation = rawTrans; } }
                 if(!ex.grammar_sub_category && (raw.grammar_sub_category||raw["詞性分類"])) ex.grammar_sub_category=raw.grammar_sub_category||raw["詞性分類"];
                 if(!ex.grammar_function && (raw.grammar_function||raw["語法功能"])) ex.grammar_function=raw.grammar_function||raw["語法功能"];
                 if(!ex.applicable_sentence_pattern && (raw.applicable_sentence_pattern||raw["句型"])) ex.applicable_sentence_pattern=raw.applicable_sentence_pattern||raw["句型"];
                 stats.merged++;
-              }
-              else {
+              } else {
                 idMax++; const first=tags[0];
                 const obj={ id:idMax, english_word:word,
                   kk_phonetic:raw.kk_phonetic||raw.KK||raw["KK音標"]||"",
@@ -179,8 +344,8 @@
                   grammar_sub_category:raw.grammar_sub_category||raw["詞性分類"]||"",
                   grammar_function:raw.grammar_function||raw["語法功能"]||"",
                   applicable_sentence_pattern:raw.applicable_sentence_pattern||raw["句型"]||"",
-                  example_sentence:raw.example_sentence||raw["例句"]||exampleFor(word, first),
-                  example_translation:raw.example_translation||raw["翻譯"]||translationFor(word, first),
+                  example_sentence:(raw.example_sentence||raw["例句"])||exampleFor(word, first),
+                  example_translation:(raw.example_translation||raw["翻譯"])||translationFor(word, first),
                   word_audio_path:raw.word_audio_path||"", example_audio_path:raw.example_audio_path||"" };
                 next.push(obj); byKey.set(word.toLowerCase(), obj); stats.added++;
               }
@@ -190,26 +355,51 @@
           return stats;
         };
 
-        const reset = () => setData(makeBaseDataset());
+        useEffect(()=>{
+          try{
+            const applied = localStorage.getItem(LS.presetApplied);
+            if(!applied){
+              addItems(BUILTIN_PRESET, {overrideExamples:true});
+              localStorage.setItem(LS.presetApplied, '1');
+            }
+          }catch{}
+        }, []);
+
+        const reset = () => { localStorage.removeItem(LS.presetApplied); setData(makeBaseDataset()); };
 
         return { data, addItems, reset };
       };
 
-      // ---- Favorites ----
-      const useFavorites = () => { const [favorites, setFavorites] = useState(() => { try{ const raw=localStorage.getItem(LS.favorites); return raw?JSON.parse(raw):[];}catch{return [];} }); useEffect(()=>{ try{ localStorage.setItem(LS.favorites, JSON.stringify(favorites)); }catch{} }, [favorites]); return { favorites, toggle:(id)=>setFavorites(cur=>cur.includes(id)?cur.filter(x=>x!==id):[...cur,id]), remove:(id)=>setFavorites(cur=>cur.filter(x=>x!==id)), clear:()=>setFavorites([]) }; };
+      const useFavorites = () => {
+        const [favorites, setFavorites] = useState(() => {
+          try{ const raw=localStorage.getItem(LS.favorites); return raw?JSON.parse(raw):[]; }catch{ return []; }
+        });
+        useEffect(()=>{ try{ localStorage.setItem(LS.favorites, JSON.stringify(favorites)); }catch{} }, [favorites]);
+        return {
+          favorites,
+          toggle:(id)=>setFavorites(cur=>cur.includes(id)?cur.filter(x=>x!==id):[...cur,id]),
+          remove:(id)=>setFavorites(cur=>cur.filter(x=>x!==id)),
+          clear:()=>setFavorites([])
+        };
+      };
 
-      // ---- Importer (File + Drop + Paste) ----
       const Importer = ({ onImport }) => {
         const [msg, setMsg] = useState("");
         const [paste, setPaste] = useState("");
         const [dragOver, setDragOver] = useState(false);
+        const [override, setOverride] = useState(true);
         const inputRef = useRef(null);
 
         const posSummary = (stats) => Object.entries(stats.tagsAdded||{}).map(([k,v])=>`${POS_LABEL[k]||k}:${v}`).join('、');
 
         const importText = async (rawText, hint) => {
           const text = String(rawText||"").replace(/^\uFEFF/, "");
-          try { const json = JSON.parse(text); if (!Array.isArray(json)) throw new Error('not array'); const stats = onImport(json); setMsg(`已匯入 ${stats.added + stats.merged} 筆（${hint}JSON），新增單字 ${stats.added}，合併 ${stats.merged}${posSummary(stats)?`，新增標籤 ${posSummary(stats)}`:""}。`); return; } catch {}
+          try {
+            const json = JSON.parse(text); if (!Array.isArray(json)) throw new Error('not array');
+            const stats = onImport(json, {overrideExamples: override});
+            setMsg(`已匯入 ${stats.added + stats.merged} 筆（${hint}JSON），新增單字 ${stats.added}，合併 ${stats.merged}${posSummary(stats)?`，新增標籤 ${posSummary(stats)}`:""}。`);
+            return;
+          } catch {}
           const rows = parseCSV(text);
           if (!rows.length) { setMsg("匯入失敗：內容不是有效的 JSON 或 CSV"); return; }
           const items = rows.map((r)=>({
@@ -223,13 +413,13 @@
             grammar_function:r["語法功能"]||r["grammar_function"]||"",
             applicable_sentence_pattern:r["句型"]||r["sentence_pattern"]||r["applicable_sentence_pattern"]||""
           }));
-          const stats = onImport(items);
+          const stats = onImport(items, {overrideExamples: override});
           setMsg(`已匯入 ${stats.added + stats.merged} 筆（${hint}CSV），新增單字 ${stats.added}，合併 ${stats.merged}${posSummary(stats)?`，新增標籤 ${posSummary(stats)}`:""}。`);
         };
 
         const onFile = async (file) => { if(!file) return; const text = await file.text(); await importText(text, '檔案/'); };
-        const onInputChange = async (e) => { const f=e.target.files?.[0]; await onFile(f); e.target.value = ""; };
-        const onDrop = async (e) => { e.preventDefault(); setDragOver(false); const f=e.dataTransfer.files?.[0]; await onFile(f); };
+        const onInputChange = async (e) => { const f=e.target.files?.[0]; await onFile(f||null); e.target.value = ""; };
+        const onDrop = async (e) => { e.preventDefault(); setDragOver(false); const f=e.dataTransfer.files?.[0]; await onFile(f||null); };
 
         return (
           <div className={`rounded-2xl border p-4 bg-white/60 ${dragOver? 'ring-2 ring-indigo-400':''}`}
@@ -239,9 +429,13 @@
             <div className="font-semibold mb-2">資料匯入（JSON/CSV）</div>
             <p className="text-sm text-gray-600 mb-3">三種方式：① 選擇檔案 ② 拖曳到此區 ③ 直接貼上文字</p>
 
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex flex-wrap items-center gap-3 mb-3">
               <input ref={inputRef} type="file" accept="application/json,.json,.csv,text/csv,text/plain" className="hidden" onChange={onInputChange} />
               <Button variant="ghost" onClick={()=>inputRef.current?.click()}>選擇 JSON 或 CSV 檔</Button>
+              <label className="flex items-center gap-1 text-xs text-gray-600">
+                <input type="checkbox" className="mr-1" checked={override} onChange={(e)=>setOverride(e.target.checked)} />
+                匯入例句／翻譯時覆蓋現有內容
+              </label>
               <span className="text-xs text-gray-500">或拖曳檔案至此</span>
             </div>
 
@@ -255,12 +449,77 @@
         );
       };
 
-      // ---- Shell ----
+      const Exporter = ({ data }) => {
+        const [markdown, setMarkdown] = useState("");
+        const [msg, setMsg] = useState("");
+
+        const escapeMarkdownCell = (value) => {
+          if (value == null) return "";
+          return String(value)
+            .replace(/\r?\n/g, '<br>')
+            .replace(/\|/g, '\\|')
+            .trim();
+        };
+
+        const datasetToMarkdown = (items) => {
+          const header = '| English | POS | 中文 | Example | 翻譯 |';
+          const divider = '| --- | --- | --- | --- | --- |';
+          const rows = items.map((w) => {
+            const tags = w.posTags || [];
+            const primary = tags[0] || 'other';
+            const sentence = w.example_sentence?.trim() ? w.example_sentence : exampleFor(w.english_word, primary);
+            const translation = w.example_translation?.trim() ? w.example_translation : translationFor(w.english_word, primary);
+            return `| ${escapeMarkdownCell(w.english_word)} | ${escapeMarkdownCell(tags.join(', '))} | ${escapeMarkdownCell(w.chinese_definition || '')} | ${escapeMarkdownCell(sentence)} | ${escapeMarkdownCell(translation)} |`;
+          });
+          return [header, divider, ...rows].join('\n');
+        };
+
+        const onGenerate = () => {
+          const md = datasetToMarkdown(data);
+          setMarkdown(md);
+          setMsg(`已產出 ${data.length} 筆的 Markdown。`);
+        };
+
+        const onCopy = async () => {
+          if (!navigator?.clipboard) {
+            setMsg("瀏覽器不支援快速複製，請手動複製。");
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(markdown);
+            setMsg("已複製 Markdown 到剪貼簿。");
+          } catch (err) {
+            setMsg("複製失敗，請手動複製。");
+          }
+        };
+
+        return (
+          <div className="rounded-2xl border p-4 bg-white/60 mt-4">
+            <div className="font-semibold mb-2">資料輸出（Markdown）</div>
+            <p className="text-sm text-gray-600 mb-3">產生 Markdown 表格，方便貼到筆記或文件。</p>
+            <div className="flex items-center gap-3 mb-3">
+              <Button variant="ghost" onClick={onGenerate}>輸出 Markdown</Button>
+              <span className="text-xs text-gray-500">共 {data.length} 筆單字</span>
+            </div>
+            {markdown && (
+              <div>
+                <textarea value={markdown} readOnly className="w-full h-40 md:h-48 px-3 py-2 rounded-lg border border-gray-300 text-xs font-mono bg-white/80" />
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button variant="ghost" onClick={onCopy}>複製 Markdown</Button>
+                  <Button variant="ghost" onClick={()=>{ setMarkdown(""); setMsg(""); }}>清除</Button>
+                </div>
+              </div>
+            )}
+            {msg && <div className="text-xs text-gray-500 mt-2">{msg}</div>}
+          </div>
+        );
+      };
+
       const Shell = ({ children, onReset }) => (
         <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
           <div className="max-w-5xl mx-auto px-4 py-6">
             <header className="flex items-center justify-between mb-6">
-              <a href="#/" className="text-2xl font-bold tracking-tight">Vocabulary MVP v2.8</a>
+              <a href="#/" className="text-2xl font-bold tracking-tight">Vocabulary MVP v3.0</a>
               <nav className="flex gap-2 items-center">
                 <a href="#/" className="px-3 py-2 rounded-lg hover:bg-gray-100">首頁</a>
                 <a href="#/favorites" className="px-3 py-2 rounded-lg hover:bg-gray-100">我的最愛</a>
@@ -269,12 +528,11 @@
               </nav>
             </header>
             {children}
-            <footer className="mt-12 text-center text-xs text-gray-400">MVP demo • Local-only • v2.8（auto-grammar + importer fields + persistence + reset）</footer>
+            <footer className="mt-12 text-center text-xs text-gray-400">MVP demo • Local-only • v3.0（preset importer + favorites + quiz + Markdown export）</footer>
           </div>
         </div>
       );
 
-      // ---- Pages ----
       const Home = ({ push, data, onImport }) => {
         const [q, setQ] = useState("");
         const categories = useMemo(() => ALL_POS.map(k => ({ key:k, count: data.filter(w=> (w.posTags||[]).includes(k)).length })), [data]);
@@ -293,6 +551,7 @@
             </div>
 
             <Importer onImport={onImport} />
+            <Exporter data={data} />
 
             <div className="mt-8 mb-3 flex items-center gap-3">
               <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="搜尋單字..." className="w-full md:w-1/2 px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
@@ -313,7 +572,7 @@
         const list = data.filter(w => (w.posTags||[]).includes(cat));
         return (
           <div>
-            <h1 className="text-2xl font-bold mb-4">{POS_LABEL[cat]}（{list.length}）</h1>
+            <h1 className="text-2xl font-bold mb-4">{POS_LABEL[cat] || cat || '—'}（{list.length}）</h1>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {list.map(w => (
                 <a key={w.id} href={`#/word/${w.id}`} className="block rounded-xl border p-3 hover:shadow">
@@ -326,10 +585,18 @@
         );
       };
 
-      const WordDetail = ({ id, data, favoritesApi }) => {
+      const WordDetail = ({ id, data, favoritesApi, push, prevRoute }) => {
         const word = data.find(w => String(w.id) === String(id));
         const [showTrans, setShowTrans] = useState(false);
         const [selPos, setSelPos] = useState(word?.posTags?.[0] || "other");
+        const [mdPreview, setMdPreview] = useState('');
+        const [mdStatus, setMdStatus] = useState('');
+        const [showMdPreview, setShowMdPreview] = useState(false);
+        useEffect(()=>{
+          setMdStatus('');
+          setShowMdPreview(false);
+          setMdPreview('');
+        }, [selPos, word?.id]);
         if (!word) return <div>找不到單字。</div>;
         const isFav = favoritesApi.favorites.includes(word.id);
         const sentence = word.example_sentence && word.example_sentence.trim() ? word.example_sentence : exampleFor(word.english_word, selPos);
@@ -337,19 +604,59 @@
         const auto = grammarDefaults(word.english_word, selPos, word.grammar_sub_category);
         const gFunc = (word.grammar_function||"") || auto.grammar_function;
         const gPattern = (word.applicable_sentence_pattern||"") || auto.sentence_pattern;
+
+        const handleOutput = async () => {
+          const md = wordToMarkdown(word, selPos, {
+            example_sentence: sentence,
+            example_translation: trans,
+            grammar_function: gFunc,
+            applicable_sentence_pattern: gPattern,
+            grammar_sub_category: word.grammar_sub_category
+          });
+          setMdPreview(md);
+          if (!md || !md.trim()) {
+            setMdStatus('此單字目前沒有可輸出的內容。');
+            setShowMdPreview(false);
+            return;
+          }
+          try {
+            if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(md);
+              setMdStatus('已複製 Markdown，可貼到 Google 文件或投影片。');
+              setShowMdPreview(false);
+              return;
+            }
+            throw new Error('clipboard not available');
+          } catch (err) {
+            setMdStatus('無法自動複製，請手動複製下方內容。');
+            setShowMdPreview(true);
+          }
+        };
         return (
           <div>
             <div className="flex items-start justify-between gap-3">
-              <h1 className="text-3xl font-bold">{word.english_word}</h1>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" onClick={()=>{
+                  if (prevRoute && prevRoute.route) {
+                    if (prevRoute.route === 'category' && prevRoute.param) { push(`#/category/${prevRoute.param}`); return; }
+                    if (prevRoute.route === 'favorites') { push('#/favorites'); return; }
+                    if (prevRoute.route === 'quiz') { push('#/quiz'); return; }
+                    if (prevRoute.route === 'word' && prevRoute.param) { push(`#/word/${prevRoute.param}`); return; }
+                    if (prevRoute.route === 'home') { push('#/'); return; }
+                  }
+                  push('#/');
+                }}>← 返回</Button>
+                <h1 className="text-3xl font-bold">{word.english_word}</h1>
+              </div>
               <div className="flex gap-2">
                 <Button variant={isFav?"danger":"primary"} onClick={()=>favoritesApi.toggle(word.id)}>{isFav?"移除最愛":"加入最愛"}</Button>
                 <Button variant="ghost" onClick={()=>speak(word.english_word)}>發音</Button>
               </div>
             </div>
-            <div className="mt-2 text-gray-600">詞性：{(word.posTags||[]).map(p=>POS_LABEL[p]||p).join('、')}</div>
+            <div className="mt-2 text-gray-600">詞性：{(word.posTags||[]).map((p)=>POS_LABEL[p]||p).join('、')}</div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              {(word.posTags||[]).map(p => (
+              {(word.posTags||[]).map((p) => (
                 <Button key={p} variant={p===selPos?"primary":"ghost"} onClick={()=>setSelPos(p)}>{POS_LABEL[p]||p}</Button>
               ))}
             </div>
@@ -372,13 +679,23 @@
                   {gFunc && <li>語法功能：{gFunc}</li>}
                   {gPattern && <li>句型：{gPattern}</li>}
                 </ul>
-              </div>
             </div>
           </div>
-        );
-      };
 
-      // --- Cloze helpers ---
+          <div className="mt-8 flex justify-end">
+            <Button variant="ghost" onClick={handleOutput}>output</Button>
+          </div>
+          {mdStatus && <div className="mt-2 text-sm text-gray-500 text-right">{mdStatus}</div>}
+          {showMdPreview && (
+            <div className="mt-3">
+              <textarea value={mdPreview} readOnly className="w-full h-32 md:h-40 px-3 py-2 rounded-lg border border-gray-300 text-xs font-mono bg-white/80" />
+              <div className="mt-1 text-xs text-gray-400 text-right">選取並複製後即可貼到 Google 文件／投影片。</div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
       const escapeForRegex = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const makeCloze = (sentence, answer) => {
         const esc = escapeForRegex(answer);
@@ -387,7 +704,7 @@
       };
 
       const FavoritesPage = ({ favoritesApi, data }) => {
-        const items = data.filter(w => favoritesApi.favorites.includes(w.id));
+        const items = data.filter((w) => favoritesApi.favorites.includes(w.id));
         return (
           <div>
             <div className="flex items-center justify-between">
@@ -401,7 +718,7 @@
               <p className="text-gray-600 mt-3">尚未加入任何單字。前往單字頁按「加入最愛」。</p>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
-                {items.map(w => (
+                {items.map((w) => (
                   <div key={w.id} className="rounded-xl border p-3">
                     <a className="font-semibold hover:underline" href={`#/word/${w.id}`}>{w.english_word}</a>
                     <div className="text-xs text-gray-500 mb-2">{(w.posTags||[]).join(', ')}</div>
@@ -417,7 +734,14 @@
       const QuizPage = ({ favoritesApi, hash, data }) => {
         const params = useMemo(() => Object.fromEntries(new URLSearchParams((hash.split('?')[1]||''))), [hash]);
         const source = params.source || 'all';
-        const pool = useMemo(() => { if (source === 'favorites') { const ids=new Set(favoritesApi.favorites); const arr=data.filter(w=>ids.has(w.id)); return arr.length?arr:data; } return data; }, [source, favoritesApi.favorites, data]);
+        const pool = useMemo(() => {
+          if (source === 'favorites') {
+            const ids=new Set(favoritesApi.favorites);
+            const arr=data.filter((w)=>ids.has(w.id));
+            return arr.length?arr:data;
+          }
+          return data;
+        }, [source, favoritesApi.favorites, data]);
         const [idx, setIdx] = useState(0); const [score, setScore] = useState(0);
         const [input, setInput] = useState(""); const [showAns, setShowAns] = useState(false);
         const item = pool[idx % pool.length];
@@ -452,14 +776,13 @@
         );
       };
 
-      // ---- Self tests ----
       const SelfTests = ({ data }) => {
         const [open, setOpen] = useState(false);
         const results = useMemo(() => {
           const r = [];
-          const rows1 = parseCSV('英文,中譯\n"a,b",好\n'); r.push({name:'CSV quoted comma (LF)', pass: rows1.length===1 && rows1[0].英文==='a,b'});
-          const rows2 = parseCSV('英文,中譯\r\n"a,b",好\r\n'); r.push({name:'CSV quoted comma (CRLF)', pass: rows2.length===1 && (rows2[0].中文==='好' || rows2[0].中譯==='好')});
-          const after = data.find(w=>w.english_word.toLowerCase()==='after'); r.push({name:'Multi-POS seed union', pass: !!(after && after.posTags.includes('preposition') && after.posTags.includes('conjunction'))});
+          const rows1 = parseCSV('英文,中譯\n"a,b",好\n'); r.push({name:'CSV quoted comma (LF)', pass: rows1.length===1 && (rows1[0].英文==='a,b' || rows1[0]['a,b']==='好')});
+          const rows2 = parseCSV('英文,中譯\r\n"a,b",好\r\n'); r.push({name:'CSV quoted comma (CRLF)', pass: rows2.length===1});
+          const after = data.find((w)=>w.english_word.toLowerCase()==='after'); r.push({name:'Multi-POS seed union', pass: !!(after && after.posTags.includes('preposition') && after.posTags.includes('conjunction'))});
           const c1 = makeCloze('They add values.', 'add'); r.push({name:'Cloze basic', pass: /_____/.test(c1)});
           const c2 = makeCloze('C++ is powerful.', 'C++'); r.push({name:'Cloze escapes symbols', pass: /_____/.test(c2)});
           r.push({name:'POS normalize pronoun', pass: normalizePOS('代名詞')==='pronoun'});
@@ -467,6 +790,8 @@
           const ms = multiSplit('a，b\nc'); r.push({name:'multiSplit Chinese & LF', pass: ms.length===3 && ms[0]==='a' && ms[1]==='b' && ms[2]==='c'});
           const g1 = grammarDefaults('we','pronoun','主格代名詞'); r.push({name:'Grammar default pronoun subj.', pass: /主詞/.test(g1.grammar_function) && /we/.test(g1.sentence_pattern)});
           const g2 = grammarDefaults('always','adverb',''); r.push({name:'Grammar default adverb frequency', pass: /頻率/.test(g2.grammar_function)});
+          const t1 = translationFor('activity','noun'); r.push({name:'translation default noun', pass: /^這是/.test(t1)});
+          const t2 = translationFor('add','verb'); r.push({name:'translation default verb', pass: /(每天add。|每天加。)$/.test(t2)});
           return r;
         }, [data]);
         const passCount = results.filter(x=>x.pass).length;
@@ -478,24 +803,43 @@
         );
       };
 
-      // ---- Root ----
       function App(){
         const { hash, push } = useHashRoute();
         const favoritesApi = useFavorites();
         const { data, addItems, reset } = useDataset();
-        const [route, param] = useMemo(() => { const h=hash.replace(/^#\//, ""); if(!h) return ["home", null]; const [p0,p1]=h.split("?")[0].split("/"); if(p0==="") return ["home", null]; if(p0==="category") return ["category", p1]; if(p0==="word") return ["word", p1]; if(p0==="favorites") return ["favorites", null]; if(p0==="quiz") return ["quiz", null]; return ["home", null]; }, [hash]);
+        const [route, param] = useMemo(() => {
+          const h=hash.replace(/^#\//, "");
+          if(!h) return ["home", null];
+          const [p0,p1]=h.split("?")[0].split("/");
+          if(p0==="") return ["home", null];
+          if(p0==="category") return ["category", p1];
+          if(p0==="word") return ["word", p1];
+          if(p0==="favorites") return ["favorites", null];
+          if(p0==="quiz") return ["quiz", null];
+          return ["home", null];
+        }, [hash]);
+        const [navHistory, setNavHistory] = useState(() => ({ current: { route, param }, previous: null }));
+        useEffect(() => {
+          setNavHistory(prev => {
+            if (prev.current.route === route && prev.current.param === param) return prev;
+            return { current: { route, param }, previous: prev.current };
+          });
+        }, [route, param]);
         return (
           <Shell onReset={reset}>
             {route === "home" && <><Home push={push} data={data} onImport={addItems} /><SelfTests data={data} /></>}
             {route === "category" && <CategoryList cat={param} data={data} />}
-            {route === "word" && <WordDetail id={param} data={data} favoritesApi={favoritesApi} />}
+            {route === "word" && <WordDetail id={param} data={data} favoritesApi={favoritesApi} push={push} prevRoute={navHistory.previous} />}
             {route === "favorites" && <FavoritesPage favoritesApi={favoritesApi} data={data} />}
             {route === "quiz" && <QuizPage favoritesApi={favoritesApi} hash={hash} data={data} />}
           </Shell>
         );
       }
 
-      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+      const rootEl = document.getElementById('root');
+      if (rootEl) {
+        ReactDOM.createRoot(rootEl).render(<App />);
+      }
     </script>
   </body>
 </html>

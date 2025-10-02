@@ -52,7 +52,7 @@
       const PRESET_VERSION = 'csv_v3';
       const CSV_SOURCES = [
         { name: '氣候', urls: ['氣候單字_含字根字首字尾.csv', '氣候.csv'], defaults: { theme: 'climate' } },
-        { name: '2000單', urls: ['2000單_含字根字首字尾.csv', '2000單_延伸資料_清理版.csv'], defaults: { theme: 'core2000' }, limit: 100 }
+        { name: '2000單', urls: ['2000單_含字根字首字尾_前100.csv', '2000單_延伸資料_清理版.csv'], defaults: { theme: 'core2000' }, limit: 100 }
       ];
 
       const speak = (rawText) => {
@@ -86,6 +86,20 @@
           </button>
         );
       };
+
+      const SpeakerButton = ({ onClick, label, className = "" }) => (
+        <button
+          type="button"
+          onClick={onClick}
+          aria-label={label}
+          title={label}
+          className={`inline-flex h-8 w-8 items-center justify-center rounded-full border border-indigo-200 bg-white text-indigo-600 shadow-sm transition hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${className}`}
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+            <path d="M4 9.25v5.5c0 .69.56 1.25 1.25 1.25H7l3.29 2.63c.83.66 2.04.07 2.04-1V6.62c0-1.07-1.21-1.66-2.04-1L7 8.25H5.25C4.56 8.25 4 8.81 4 9.25Zm11.21-2.46a.75.75 0 0 0-.97 1.14 4.5 4.5 0 0 1 0 7.14.75.75 0 0 0 .97 1.14 6 6 0 0 0 0-9.42Zm2.79-1.95a.75.75 0 0 0-.97 1.13 7.5 7.5 0 0 1 0 11.56.75.75 0 0 0 .97 1.13 9 9 0 0 0 0-13.82Z" />
+          </svg>
+        </button>
+      );
 
             window.__INITIAL_DATASET__ = [
   {
@@ -1891,15 +1905,22 @@
     },
     "derivatives": [],
     "synonyms": [
-      "able-bodied",
-      "capable"
+      "competent",
+      "fit",
+      "capable",
+      "healthy",
+      "able-bodied"
     ],
     "antonyms": [
-      "unable"
-    ],
-    "confusables": [
       "unable",
       "not able"
+    ],
+    "confusables": [
+      "withstand",
+      "convince",
+      "communicate",
+      "afford",
+      "detect"
     ],
     "affix_info": {
       "prefix": "",
@@ -1931,11 +1952,11 @@
     },
     "derivatives": [],
     "synonyms": [
-      "almost",
-      "approximately",
-      "around",
-      "astir",
-      "close to"
+      "virtually",
+      "near",
+      "well-nigh",
+      "some",
+      "nearly"
     ],
     "antonyms": [],
     "confusables": [],
@@ -1969,19 +1990,23 @@
     },
     "derivatives": [],
     "synonyms": [
+      "supra",
       "higher up",
       "in a higher place",
-      "supra",
       "to a higher place"
     ],
     "antonyms": [
-      "below"
-    ],
-    "confusables": [
       "beneath",
       "at a lower place",
       "to a lower place",
       "below"
+    ],
+    "confusables": [
+      "asphalt",
+      "sea",
+      "level",
+      "runway",
+      "mean"
     ],
     "affix_info": {
       "prefix": "",
@@ -2013,11 +2038,20 @@
     },
     "derivatives": [],
     "synonyms": [
+      "foreign",
+      "overseas",
       "afield",
-      "overseas"
+      "over the sea",
+      "beyond the sea"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "overseas",
+      "signing",
+      "citizenship",
+      "foreign",
+      "switzerland"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2048,17 +2082,21 @@
     },
     "derivatives": [],
     "synonyms": [
-      "absentminded",
+      "devoid",
+      "inattentive",
+      "remove",
       "abstracted",
-      "lacking",
-      "missing",
-      "scatty"
+      "missing"
     ],
     "antonyms": [
       "present"
     ],
     "confusables": [
-      "present"
+      "vein",
+      "veins",
+      "dorsal",
+      "lateral",
+      "altogether"
     ],
     "affix_info": {
       "prefix": "",
@@ -2081,12 +2119,7 @@
     "example_translation": "我不能接受你的禮物。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: accepted",
-      "過去分詞: accepted",
-      "現在分詞: accepting",
-      "第三人稱: accepts"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2095,29 +2128,32 @@
     },
     "derivatives": [],
     "synonyms": [
+      "have",
+      "take",
       "admit",
-      "assume",
-      "bear",
       "consent",
-      "go for"
+      "assume"
     ],
     "antonyms": [
-      "refuse",
-      "reject"
-    ],
-    "confusables": [
       "decline",
       "reject",
       "refuse",
       "turn down",
       "pass up"
     ],
+    "confusables": [
+      "reject",
+      "invitation",
+      "offer",
+      "payment",
+      "appointment"
+    ],
     "affix_info": {
       "prefix": "",
-      "root": "",
+      "root": "cap/cept",
       "suffix": "",
-      "meaning": "",
-      "example": ""
+      "meaning": "take, hold (拿、持有)",
+      "example": "capture (捕獲), accept (接受), concept (概念), intercept (攔截), except (除了)"
     },
     "id": 44
   },
@@ -2133,9 +2169,7 @@
     "example_translation": "高速公路上發生了一起車禍。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: accidents"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2144,12 +2178,17 @@
     },
     "derivatives": [],
     "synonyms": [
-      "chance event",
       "fortuity",
-      "stroke"
+      "chance event"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "coma",
+      "collision",
+      "wheelchair",
+      "crash",
+      "occurred"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2180,12 +2219,21 @@
     },
     "derivatives": [],
     "synonyms": [
-      "crossways",
-      "crosswise"
+      "over",
+      "decussate",
+      "crossed",
+      "crosswise",
+      "intersecting"
     ],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "uncrossed"
+    ],
+    "confusables": [
+      "globe",
+      "continent",
+      "strait",
+      "membrane",
+      "spectrum"
     ],
     "affix_info": {
       "prefix": "",
@@ -2208,9 +2256,7 @@
     "example_translation": "他的善舉感動了每一個人。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: acts"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2219,17 +2265,23 @@
     },
     "derivatives": [],
     "synonyms": [
-      "bit",
-      "deed",
-      "enactment",
-      "human action",
-      "human activity"
+      "work",
+      "process",
+      "play",
+      "represent",
+      "bit"
     ],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "refrain",
       "forbear",
       "forebear"
+    ],
+    "confusables": [
+      "repealed",
+      "amended",
+      "enacted",
+      "offence",
+      "statute"
     ],
     "affix_info": {
       "prefix": "",
@@ -2252,9 +2304,7 @@
     "example_translation": "政府採取行動改善教育。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: actions"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2263,28 +2313,30 @@
     },
     "derivatives": [],
     "synonyms": [
-      "action at law",
-      "action mechanism",
-      "activeness",
       "activity",
-      "legal action"
+      "legal action",
+      "activeness",
+      "natural process",
+      "military action"
     ],
     "antonyms": [
-      "inaction",
-      "inactiveness",
-      "inactivity"
-    ],
-    "confusables": [
       "inaction",
       "inactivity",
       "inactiveness"
     ],
+    "confusables": [
+      "thriller",
+      "lawsuit",
+      "adventure",
+      "wounded",
+      "actions"
+    ],
     "affix_info": {
       "prefix": "",
-      "root": "",
+      "root": "act",
       "suffix": "",
-      "meaning": "",
-      "example": ""
+      "meaning": "to do (做)",
+      "example": "action (行動), actor (演員), active (活躍的), activity (活動), react (反應), interact (互動), transact (交易)"
     },
     "id": 48
   },
@@ -2309,32 +2361,32 @@
     },
     "derivatives": [],
     "synonyms": [
-      "alive",
-      "combat-ready",
       "dynamic",
-      "fighting",
-      "participating"
+      "brisk",
+      "hot",
+      "open",
+      "nimble"
     ],
     "antonyms": [
-      "dormant",
-      "extinct",
-      "inactive",
-      "passive",
-      "quiet"
-    ],
-    "confusables": [
       "quiet",
       "passive",
       "inactive",
       "dormant",
       "extinct"
     ],
+    "confusables": [
+      "passive",
+      "volcanoes",
+      "ingredient",
+      "duty",
+      "participant"
+    ],
     "affix_info": {
       "prefix": "",
-      "root": "",
+      "root": "act",
       "suffix": "",
-      "meaning": "",
-      "example": ""
+      "meaning": "to do (做)",
+      "example": "action (行動), actor (演員), active (活躍的), activity (活動), react (反應), interact (互動), transact (交易)"
     },
     "id": 49
   },
@@ -2350,9 +2402,7 @@
     "example_translation": "我們為週末計劃了很多活動。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: activities"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2363,27 +2413,29 @@
     "synonyms": [
       "action",
       "activeness",
-      "bodily function",
-      "bodily process",
-      "body process"
+      "natural process",
+      "radioactivity",
+      "bodily function"
     ],
     "antonyms": [
-      "inaction",
-      "inactiveness",
-      "inactivity"
-    ],
-    "confusables": [
       "inertia",
       "inaction",
       "inactivity",
       "inactiveness"
     ],
+    "confusables": [
+      "neurons",
+      "cortex",
+      "enzyme",
+      "enzymes",
+      "volcano"
+    ],
     "affix_info": {
       "prefix": "",
-      "root": "",
+      "root": "act",
       "suffix": "",
-      "meaning": "",
-      "example": ""
+      "meaning": "to do (做)",
+      "example": "action (行動), actor (演員), active (活躍的), activity (活動), react (反應), interact (互動), transact (交易)"
     },
     "id": 50
   },
@@ -2399,9 +2451,7 @@
     "example_translation": "這位男演員因他的表演獲得了獎項。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: actors"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2410,20 +2460,26 @@
     },
     "derivatives": [],
     "synonyms": [
+      "thespian",
       "doer",
-      "histrion",
       "player",
-      "role player",
-      "thespian"
+      "worker",
+      "histrion"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "comedian",
+      "screenwriter",
+      "portrayal",
+      "playwright",
+      "roles"
+    ],
     "affix_info": {
       "prefix": "",
-      "root": "",
+      "root": "act",
       "suffix": "",
-      "meaning": "",
-      "example": ""
+      "meaning": "to do (做)",
+      "example": "action (行動), actor (演員), active (活躍的), activity (活動), react (反應), interact (互動), transact (交易)"
     },
     "id": 51
   },
@@ -2439,9 +2495,7 @@
     "example_translation": "這位女演員因她在電影中的角色而出名。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: actresses"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2451,7 +2505,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "playmate",
+      "dancer",
+      "malayalam",
+      "comedian",
+      "bafta"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2482,11 +2542,13 @@
     },
     "derivatives": [],
     "synonyms": [
-      "in reality",
-      "really"
+      "really",
+      "in reality"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "happened"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2508,12 +2570,7 @@
     "example_translation": "請在茶裡加一些糖。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: added",
-      "過去分詞: added",
-      "現在分詞: adding",
-      "第三人稱: adds"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2522,22 +2579,25 @@
     },
     "derivatives": [],
     "synonyms": [
-      "add together",
-      "add up",
-      "append",
+      "impart",
       "bestow",
-      "bring"
+      "supply",
+      "contribute",
+      "total"
     ],
     "antonyms": [
-      "subtract",
-      "take away"
-    ],
-    "confusables": [
       "deduct",
       "take out",
       "take off",
       "subtract",
       "take away"
+    ],
+    "confusables": [
+      "subtract",
+      "insult",
+      "flavor",
+      "functionality",
+      "dimension"
     ],
     "affix_info": {
       "prefix": "",
@@ -2560,9 +2620,7 @@
     "example_translation": "你的家庭地址是什麼？",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: addresses"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2571,14 +2629,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "computer address",
-      "destination",
-      "name and address",
-      "reference",
-      "savoir-faire"
+      "work",
+      "direct",
+      "cover",
+      "handle",
+      "deal"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "addresses",
+      "bits",
+      "announcer",
+      "addressing",
+      "concerns"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2600,12 +2664,7 @@
     "example_translation": "我欽佩她的勇氣。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: admired",
-      "過去分詞: admired",
-      "現在分詞: admiring",
-      "第三人稱: admires"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2616,10 +2675,14 @@
     "synonyms": [
       "look up to"
     ],
-    "antonyms": [
-      "look down on"
+    "antonyms": [],
+    "confusables": [
+      "despise",
+      "emulate",
+      "scenery",
+      "courage",
+      "appreciate"
     ],
-    "confusables": [],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2641,9 +2704,7 @@
     "example_translation": "只有成人才能進入這個區域。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: adults"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2652,14 +2713,22 @@
     },
     "derivatives": [],
     "synonyms": [
-      "grownup"
+      "big",
+      "mature",
+      "grown",
+      "full-grown",
+      "fully grown"
     ],
     "antonyms": [
-      "juvenile"
-    ],
-    "confusables": [
       "juvenile",
       "juvenile person"
+    ],
+    "confusables": [
+      "swim",
+      "contemporary",
+      "plumage",
+      "juvenile",
+      "format"
     ],
     "affix_info": {
       "prefix": "",
@@ -2682,9 +2751,7 @@
     "example_translation": "這則廣告引起了我的注意。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: advertisements"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2693,14 +2760,18 @@
     },
     "derivatives": [],
     "synonyms": [
-      "ad",
       "advert",
       "advertising",
-      "advertizement",
-      "advertizing"
+      "ad"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "advert",
+      "advertisements",
+      "advertiser",
+      "ads",
+      "advertising"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2722,9 +2793,7 @@
     "example_translation": "他的建議很有幫助。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "不可數名詞"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2734,7 +2803,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "consent",
+      "guidance",
+      "counsel",
+      "advised",
+      "matters"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2756,12 +2831,7 @@
     "example_translation": "我勸你更努力學習。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: advised",
-      "過去分詞: advised",
-      "現在分詞: advising",
-      "第三人稱: advises"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2771,19 +2841,25 @@
     "derivatives": [],
     "synonyms": [
       "apprise",
-      "apprize",
       "counsel",
-      "give notice",
+      "suggest",
+      "propose",
       "notify"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "matters",
+      "consent",
+      "assist",
+      "caution",
+      "relating"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
-      "suffix": "",
-      "meaning": "",
-      "example": ""
+      "suffix": "-ize / -ise",
+      "meaning": "to make or become (使成為／使…化)",
+      "example": "-ize: organize (組織), specialize (專門從事), customize (客製化), realize (實現), apologize (道歉), modernize (現代化), categorize (分類), industrialize (工業化); -ise (英式拼法): advertise (做廣告), advise (建議), organise (＝organize)"
     },
     "id": 60
   },
@@ -2799,12 +2875,7 @@
     "example_translation": "天氣會影響你的情緒。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: affected",
-      "過去分詞: affected",
-      "現在分詞: affecting",
-      "第三人稱: affects"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2813,14 +2884,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "bear on",
-      "bear upon",
-      "dissemble",
-      "feign",
-      "impact"
+      "regard",
+      "strike",
+      "impact",
+      "touch",
+      "sham"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "mandates",
+      "outcome",
+      "affects",
+      "emotion",
+      "emotions"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2850,11 +2927,18 @@
       "derivation": []
     },
     "derivatives": [],
-    "synonyms": [],
-    "antonyms": [
-      "unafraid"
+    "synonyms": [
+      "concerned",
+      "disinclined"
     ],
-    "confusables": [],
+    "antonyms": [],
+    "confusables": [
+      "fear",
+      "admit",
+      "fears",
+      "hurt",
+      "ask"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -2885,11 +2969,11 @@
     },
     "derivatives": [],
     "synonyms": [
-      "afterward",
+      "subsequently",
       "afterwards",
       "later",
-      "later on",
-      "subsequently"
+      "afterward",
+      "later on"
     ],
     "antonyms": [],
     "confusables": [],
@@ -2914,9 +2998,7 @@
     "example_translation": "我們下午見面吧。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: afternoons"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -2928,7 +3010,13 @@
       "good afternoon"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "evening",
+      "slot",
+      "weekday",
+      "morning",
+      "tea"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3018,9 +3106,7 @@
     "example_translation": "你幾歲了？",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: ages"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3029,15 +3115,21 @@
     },
     "derivatives": [],
     "synonyms": [
-      "eld",
-      "geezerhood",
-      "historic period",
-      "long time",
-      "old age"
+      "mature",
+      "get on",
+      "maturate",
+      "years",
+      "long time"
     ],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "rejuvenate"
+    ],
+    "confusables": [
+      "median",
+      "householder",
+      "older",
+      "couples",
+      "household"
     ],
     "affix_info": {
       "prefix": "",
@@ -3068,9 +3160,18 @@
       "derivation": []
     },
     "derivatives": [],
-    "synonyms": [],
+    "synonyms": [
+      "past",
+      "agone"
+    ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "mya",
+      "glaciation",
+      "cambrian",
+      "homo",
+      "pleistocene"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3092,12 +3193,7 @@
     "example_translation": "我同意你的意見。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: agreed",
-      "過去分詞: agreed",
-      "現在分詞: agreeing",
-      "第三人稱: agrees"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3107,20 +3203,24 @@
     "derivatives": [],
     "synonyms": [
       "accord",
-      "check",
-      "concord",
       "concur",
-      "consort"
+      "fit",
+      "check",
+      "jibe"
     ],
     "antonyms": [
-      "disagree"
-    ],
-    "confusables": [
       "disaccord",
       "disagree",
       "differ",
       "take issue",
       "discord"
+    ],
+    "confusables": [
+      "disagree",
+      "noun",
+      "marry",
+      "cited",
+      "participate"
     ],
     "affix_info": {
       "prefix": "",
@@ -3136,16 +3236,14 @@
     "kk_phonetic": "/əˈɡrimənt/",
     "chinese_definition": "n. 協議",
     "posTags": [
-      "noun"
+      "other"
     ],
     "theme": "core2000",
     "example_sentence": "Both parties signed the agreement.",
     "example_translation": "雙方簽署了協議。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: agreements"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3155,24 +3253,28 @@
     "derivatives": [],
     "synonyms": [
       "accord",
+      "understanding",
       "arrangement",
-      "concord",
       "correspondence",
-      "understanding"
+      "concord"
     ],
     "antonyms": [
+      "dissension",
       "disagreement"
     ],
     "confusables": [
-      "dissension",
-      "disagreement"
+      "tariffs",
+      "populace",
+      "ratified",
+      "expelled",
+      "whereby"
     ],
     "affix_info": {
       "prefix": "",
       "root": "",
-      "suffix": "",
-      "meaning": "",
-      "example": ""
+      "suffix": "-ment",
+      "meaning": "action or process (行動或過程)",
+      "example": "movement (移動), treatment (治療), endorsement (背書), development (發展), agreement (協議), judgment/judgement (判斷), enjoyment (享受)"
     },
     "id": 70
   },
@@ -3197,19 +3299,22 @@
     },
     "derivatives": [],
     "synonyms": [
+      "forward",
+      "leading",
       "before",
       "beforehand",
-      "forrader",
-      "forward",
-      "forwards"
+      "out front"
     ],
     "antonyms": [
       "back",
       "backward"
     ],
     "confusables": [
-      "back",
-      "backward"
+      "mitt",
+      "senna",
+      "democrat",
+      "barack",
+      "candidates"
     ],
     "affix_info": {
       "prefix": "",
@@ -3232,9 +3337,7 @@
     "example_translation": "她的目標是成為一名醫生。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: aims"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3243,14 +3346,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "bearing",
-      "design",
-      "heading",
-      "intent",
-      "intention"
+      "objective",
+      "direct",
+      "point",
+      "drive",
+      "bearing"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "educate",
+      "promote",
+      "improving",
+      "encouraging",
+      "encourage"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3272,9 +3381,7 @@
     "example_translation": "新鮮空氣對你的健康有益。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "不可數名詞"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3283,15 +3390,21 @@
     },
     "derivatives": [],
     "synonyms": [
-      "air travel",
-      "airwave",
-      "atmosphere",
-      "aura",
-      "aviation"
+      "zephyr",
+      "strain",
+      "beam",
+      "line",
+      "bare"
     ],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "unadjusted"
+    ],
+    "confusables": [
+      "conditioning",
+      "force",
+      "airlift",
+      "usaf",
+      "raf"
     ],
     "affix_info": {
       "prefix": "",
@@ -3314,9 +3427,7 @@
     "example_translation": "飛機準時起飛了。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: airplanes"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3325,11 +3436,17 @@
     },
     "derivatives": [],
     "synonyms": [
-      "aeroplane",
-      "plane"
+      "plane",
+      "aeroplane"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "cessna",
+      "hangar",
+      "starship",
+      "takeoff",
+      "slick"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3351,9 +3468,7 @@
     "example_translation": "我們很早就到了機場。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: airports"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3363,11 +3478,16 @@
     "derivatives": [],
     "synonyms": [
       "aerodrome",
-      "airdrome",
-      "drome"
+      "airdrome"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "jee",
+      "nautical",
+      "amritsar",
+      "runway",
+      "icao"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3389,9 +3509,7 @@
     "example_translation": "警報器在半夜響了起來。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: alarms"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3400,14 +3518,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "alarm clock",
-      "alarm system",
-      "alarum",
-      "alert",
-      "consternation"
+      "dismay",
+      "appall",
+      "consternation",
+      "appal",
+      "alarum"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "pheromone",
+      "pheromones",
+      "sounded",
+      "clocks",
+      "clock"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3429,9 +3553,7 @@
     "example_translation": "這本相冊保存了許多回憶。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: albums"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3443,7 +3565,13 @@
       "record album"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "billboard",
+      "platinum",
+      "peaked",
+      "spawned",
+      "charted"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3458,16 +3586,14 @@
     "kk_phonetic": "/ˈældʒəbrə/",
     "chinese_definition": "n. 代數",
     "posTags": [
-      "noun"
+      "other"
     ],
     "theme": "core2000",
     "example_sentence": "Algebra focuses on solving equations.",
     "example_translation": "代數專注於解方程。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: algebras"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3477,7 +3603,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "trigonometry",
+      "commutative",
+      "boolean",
+      "involution",
+      "isomorphic"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3508,10 +3640,15 @@
     },
     "derivatives": [],
     "synonyms": [
-      "likewise"
+      "likewise",
+      "like",
+      "similar"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "enjoy",
+      "praised"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3542,18 +3679,21 @@
     },
     "derivatives": [],
     "synonyms": [
+      "spirited",
       "active",
-      "alert",
+      "live",
       "animated",
-      "awake",
-      "live"
+      "enlivened"
     ],
     "antonyms": [
-      "dead",
       "unanimated"
     ],
     "confusables": [
-      "unanimated"
+      "kicking",
+      "dead",
+      "dies",
+      "revenge",
+      "kill"
     ],
     "affix_info": {
       "prefix": "",
@@ -3584,16 +3724,19 @@
       "derivation": []
     },
     "derivatives": [],
-    "synonyms": [],
-    "antonyms": [
-      "no",
-      "some"
+    "synonyms": [
+      "complete",
+      "wholly",
+      "totally",
+      "altogether",
+      "whole"
     ],
-    "confusables": [
+    "antonyms": [
       "part",
       "partly",
       "partially"
     ],
+    "confusables": [],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3615,12 +3758,7 @@
     "example_translation": "老師允許我們使用計算器。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: allowed",
-      "過去分詞: allowed",
-      "現在分詞: allowing",
-      "第三人稱: allows"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3629,24 +3767,25 @@
     },
     "derivatives": [],
     "synonyms": [
-      "admit",
-      "allow for",
-      "appropriate",
       "countenance",
+      "appropriate",
+      "admit",
+      "permit",
       "earmark"
     ],
     "antonyms": [
-      "deny",
-      "disallow",
-      "forbid",
-      "prevent"
-    ],
-    "confusables": [
       "refuse",
       "keep",
       "prevent",
       "deny",
       "forbid"
+    ],
+    "confusables": [
+      "socioeconomic",
+      "user",
+      "access",
+      "comparison",
+      "easier"
     ],
     "affix_info": {
       "prefix": "",
@@ -3678,14 +3817,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "about",
-      "most",
+      "virtually",
       "near",
-      "nearly",
-      "nigh"
+      "about",
+      "well-nigh",
+      "nearly"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "exclusively",
+      "certainly",
+      "universally",
+      "entirely",
+      "identical"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3716,14 +3861,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "entirely",
-      "exclusively",
+      "solitary",
+      "unique",
+      "unparalleled",
       "only",
-      "solely",
-      "solo"
+      "unaccompanied"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "household",
+      "size",
+      "older",
+      "average",
+      "median"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3757,7 +3908,13 @@
       "on"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "coastline",
+      "corridor",
+      "coast",
+      "axis",
+      "shore"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3793,11 +3950,15 @@
       "out loud"
     ],
     "antonyms": [
-      "softly"
-    ],
-    "confusables": [
       "softly",
       "quietly"
+    ],
+    "confusables": [
+      "xenomania",
+      "coyle",
+      "tangled",
+      "cheryl",
+      "harding"
     ],
     "affix_info": {
       "prefix": "",
@@ -3829,9 +3990,15 @@
     },
     "derivatives": [],
     "synonyms": [],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "not yet"
+    ],
+    "confusables": [
+      "begun",
+      "existed",
+      "existing",
+      "familiar",
+      "knew"
     ],
     "affix_info": {
       "prefix": "",
@@ -3863,9 +4030,9 @@
     },
     "derivatives": [],
     "synonyms": [
-      "as well",
-      "besides",
       "likewise",
+      "besides",
+      "as well",
       "too"
     ],
     "antonyms": [],
@@ -3900,20 +4067,18 @@
     },
     "derivatives": [],
     "synonyms": [
+      "buff",
+      "raw",
       "all",
-      "all in all",
-      "all told",
-      "completely",
-      "entirely"
+      "wholly",
+      "totally"
     ],
     "antonyms": [
-      "partly"
-    ],
-    "confusables": [
       "part",
       "partly",
       "partially"
     ],
+    "confusables": [],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -3944,17 +4109,17 @@
     },
     "derivatives": [],
     "synonyms": [
-      "constantly",
-      "e'er",
       "ever",
-      "forever",
-      "incessantly"
+      "forever"
     ],
     "antonyms": [
       "never"
     ],
     "confusables": [
-      "never"
+      "loved",
+      "wanted",
+      "ready",
+      "something"
     ],
     "affix_info": {
       "prefix": "",
@@ -3977,9 +4142,7 @@
     "example_translation": "救護車很快就到了。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: ambulances"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -3989,7 +4152,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "paramedic",
+      "ems",
+      "stretcher",
+      "avon",
+      "constabulary"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4021,7 +4190,12 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "turnout",
+      "others",
+      "things",
+      "peoples"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4051,9 +4225,20 @@
       "derivation": []
     },
     "derivatives": [],
-    "synonyms": [],
+    "synonyms": [
+      "antique",
+      "old",
+      "past",
+      "age-old"
+    ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "greeks",
+      "egyptian",
+      "mesopotamia",
+      "greek",
+      "romans"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4075,9 +4260,7 @@
     "example_translation": "她看起來像個天使。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: angels"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4086,14 +4269,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "Angel Falls",
+      "saint",
       "backer",
       "holy man",
       "holy person",
-      "saint"
+      "angel falls"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "cordelia",
+      "wolfram",
+      "buffy",
+      "gunn",
+      "investor"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4115,9 +4304,7 @@
     "example_translation": "他的憤怒顯而易見。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "不可數名詞"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4126,14 +4313,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "angriness",
+      "wrath",
       "choler",
       "ira",
-      "ire",
-      "wrath"
+      "see red",
+      "angriness"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "sadness",
+      "disgust",
+      "frustration",
+      "resentment",
+      "greed"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4164,15 +4357,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "furious",
-      "raging",
-      "tempestuous",
-      "wild"
+      "indignant",
+      "wild",
+      "livid",
+      "irate",
+      "aggravated"
     ],
-    "antonyms": [
-      "unangry"
+    "antonyms": [],
+    "confusables": [
+      "nerd",
+      "mob",
+      "anger",
+      "birds",
+      "inch"
     ],
-    "confusables": [],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4194,9 +4392,7 @@
     "example_translation": "動物園裡有許多不同的動物。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: animals"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4205,16 +4401,22 @@
     },
     "derivatives": [],
     "synonyms": [
-      "animate being",
-      "beast",
       "brute",
-      "creature",
-      "fauna"
+      "sensual",
+      "carnal",
+      "beast",
+      "creature"
     ],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "vegetable",
       "mineral"
+    ],
+    "confusables": [
+      "husbandry",
+      "cruelty",
+      "peta",
+      "welfare",
+      "veterinary"
     ],
     "affix_info": {
       "prefix": "",
@@ -4237,9 +4439,7 @@
     "example_translation": "她扭傷了腳踝。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: ankles"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4249,11 +4449,17 @@
     "derivatives": [],
     "synonyms": [
       "ankle joint",
-      "articulatio talocruralis",
-      "mortise joint"
+      "mortise joint",
+      "articulatio talocruralis"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "sprain",
+      "fibula",
+      "sprained",
+      "injury",
+      "ligament"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4284,6 +4490,8 @@
     },
     "derivatives": [],
     "synonyms": [
+      "different",
+      "additional",
       "some other"
     ],
     "antonyms": [],
@@ -4309,9 +4517,7 @@
     "example_translation": "這個問題的答案是什麼？",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: answers"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4320,20 +4526,24 @@
     },
     "derivatives": [],
     "synonyms": [
-      "reply",
+      "resolve",
       "resolution",
-      "response",
+      "solution",
       "result",
-      "solution"
+      "respond"
     ],
     "antonyms": [
-      "question"
-    ],
-    "confusables": [
       "inquiry",
       "enquiry",
       "question",
       "query"
+    ],
+    "confusables": [
+      "questions",
+      "question",
+      "answers",
+      "contestant",
+      "correctly"
     ],
     "affix_info": {
       "prefix": "",
@@ -4356,9 +4566,7 @@
     "example_translation": "螞蟻搬運著一塊食物。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: ants"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4367,11 +4575,19 @@
     },
     "derivatives": [],
     "synonyms": [
-      "emmet",
-      "pismire"
+      "anti",
+      "counteractive",
+      "pismire",
+      "emmet"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "formica",
+      "takeaway",
+      "ants",
+      "sousa",
+      "termite"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4406,7 +4622,13 @@
       "whatsoever"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "households",
+      "race",
+      "living",
+      "kind",
+      "sort"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4428,9 +4650,7 @@
     "example_translation": "任何人都可以加入這個俱樂部。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: anyones"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4440,7 +4660,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "else",
+      "knows",
+      "interested",
+      "listen",
+      "anything"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4462,9 +4688,7 @@
     "example_translation": "有什麼我可以幫你的嗎？",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: anythings"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4474,7 +4698,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "else",
+      "happen",
+      "wrong",
+      "happens",
+      "goes"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4508,7 +4738,13 @@
       "anyplace"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "anytime",
+      "else",
+      "everywhere",
+      "depending",
+      "inches"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4530,9 +4766,7 @@
     "example_translation": "她住在一個小公寓裡。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: apartments"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4544,7 +4778,13 @@
       "flat"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "chf",
+      "condominium",
+      "blocks",
+      "bedroom",
+      "rue"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4566,12 +4806,7 @@
     "example_translation": "我為遲到道歉。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: apologized",
-      "過去分詞: apologized",
-      "現在分詞: apologizing",
-      "第三人稱: apologizes"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4580,20 +4815,25 @@
     },
     "derivatives": [],
     "synonyms": [
-      "apologise",
       "excuse",
       "justify",
-      "rationalise",
-      "rationalize"
+      "rationalize",
+      "apologise"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "inconvenience",
+      "apology",
+      "offended",
+      "apologizes",
+      "forgive"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
-      "suffix": "",
-      "meaning": "",
-      "example": ""
+      "suffix": "-ize / -ise",
+      "meaning": "to make or become (使成為／使…化)",
+      "example": "-ize: organize (組織), specialize (專門從事), customize (客製化), realize (實現), apologize (道歉), modernize (現代化), categorize (分類), industrialize (工業化); -ise (英式拼法): advertise (做廣告), advise (建議), organise (＝organize)"
     },
     "id": 107
   },
@@ -4602,16 +4842,14 @@
     "kk_phonetic": "/æp/",
     "chinese_definition": "n. 應用程式",
     "posTags": [
-      "noun"
+      "other"
     ],
     "theme": "core2000",
     "example_sentence": "This app helps you learn new languages.",
     "example_translation": "這個應用程式幫助你學習新語言。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: apps"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4621,7 +4859,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "ios",
+      "apps",
+      "ipad",
+      "iphone",
+      "android"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4643,12 +4887,7 @@
     "example_translation": "太陽很快就會出現。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: appeared",
-      "過去分詞: appeared",
-      "現在分詞: appearing",
-      "第三人稱: appears"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4657,18 +4896,18 @@
     },
     "derivatives": [],
     "synonyms": [
-      "come along",
-      "come out",
       "look",
-      "seem"
+      "seem",
+      "come out",
+      "come along"
     ],
     "antonyms": [
-      "disappear"
-    ],
-    "confusables": [
       "vanish",
       "disappear",
       "go away"
+    ],
+    "confusables": [
+      "ballot"
     ],
     "affix_info": {
       "prefix": "",
@@ -4691,9 +4930,7 @@
     "example_translation": "我早餐吃了一個蘋果。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: apples"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4702,11 +4939,17 @@
     },
     "derivatives": [],
     "synonyms": [
-      "Malus pumila",
+      "malus pumila",
       "orchard apple tree"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "macintosh",
+      "ipod",
+      "cider",
+      "iphone",
+      "ipad"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4728,12 +4971,7 @@
     "example_translation": "我非常感謝你的幫助。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: appreciated",
-      "過去分詞: appreciated",
-      "現在分詞: appreciating",
-      "第三人稱: appreciates"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4742,21 +4980,25 @@
     },
     "derivatives": [],
     "synonyms": [
-      "apprise",
-      "apprize",
+      "value",
+      "treasure",
       "prize",
       "revalue",
       "take account"
     ],
     "antonyms": [
-      "depreciate"
-    ],
-    "confusables": [
       "depreciate",
       "undervalue",
       "devalue",
       "devaluate",
       "twirlingly"
+    ],
+    "confusables": [
+      "appreciation",
+      "qualities",
+      "beauty",
+      "enjoy",
+      "understand"
     ],
     "affix_info": {
       "prefix": "",
@@ -4788,10 +5030,13 @@
     },
     "derivatives": [],
     "synonyms": [
-      "Apr"
+      "apr"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "footballer",
+      "politician"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4813,9 +5058,7 @@
     "example_translation": "這個地區以其美麗的風景而聞名。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: areas"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4824,14 +5067,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "arena",
-      "country",
       "domain",
-      "expanse",
-      "field"
+      "field",
+      "region",
+      "sphere",
+      "expanse"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "forested",
+      "residing",
+      "prussia",
+      "inhabited",
+      "acres"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4853,12 +5102,7 @@
     "example_translation": "他們經常就政治問題爭論。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: argued",
-      "過去分詞: argued",
-      "現在分詞: arguing",
-      "第三人稱: argues"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4868,13 +5112,19 @@
     "derivatives": [],
     "synonyms": [
       "contend",
+      "indicate",
       "debate",
       "fence",
-      "indicate",
       "reason"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "capitalism",
+      "argument",
+      "arguments",
+      "should",
+      "merely"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4896,9 +5146,7 @@
     "example_translation": "他在事故中摔斷了手臂。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: arms"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4907,17 +5155,23 @@
     },
     "derivatives": [],
     "synonyms": [
-      "branch",
-      "limb",
-      "sleeve",
+      "fortify",
       "subdivision",
+      "gird",
+      "sleeve",
       "weapon"
     ],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "disarm",
       "demilitarize",
       "demilitarise"
+    ],
+    "confusables": [
+      "amputated",
+      "elbow",
+      "chromosome",
+      "bowler",
+      "cores"
     ],
     "affix_info": {
       "prefix": "",
@@ -4940,9 +5194,7 @@
     "example_translation": "他舒適地坐在扶手椅上。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: armchairs"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4952,7 +5204,13 @@
     "derivatives": [],
     "synonyms": [],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "fauteuil",
+      "philosophizing",
+      "apocrypha",
+      "graphene",
+      "gurus"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -4974,9 +5232,7 @@
     "example_translation": "他去年參軍了。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: armies"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -4985,14 +5241,16 @@
     },
     "derivatives": [],
     "synonyms": [
-      "U. S. Army",
-      "US Army",
-      "USA",
-      "United States Army",
-      "ground forces"
+      "regular army"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "potomac",
+      "corps",
+      "airfield",
+      "infantry",
+      "commanded"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5023,14 +5281,19 @@
     },
     "derivatives": [],
     "synonyms": [
+      "round",
       "about",
-      "approximately",
-      "close to",
+      "some",
       "just about",
-      "more or less"
+      "roughly"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "globe",
+      "bce",
+      "neck",
+      "world"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5052,12 +5315,7 @@
     "example_translation": "我會為這次旅行安排好一切。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: arranged",
-      "過去分詞: arranged",
-      "現在分詞: arranging",
-      "第三人稱: arranges"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5066,17 +5324,21 @@
     },
     "derivatives": [],
     "synonyms": [
-      "coif",
-      "coiffe",
-      "coiffure",
-      "do",
-      "dress"
+      "order",
+      "set",
+      "stage",
+      "set up",
+      "coif"
     ],
     "antonyms": [
       "disarrange"
     ],
     "confusables": [
-      "disarrange"
+      "truce",
+      "marriage",
+      "meeting",
+      "financing",
+      "wedding"
     ],
     "affix_info": {
       "prefix": "",
@@ -5099,12 +5361,7 @@
     "example_translation": "我們準時到達了車站。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: arrived",
-      "過去分詞: arrived",
-      "現在分詞: arriving",
-      "第三人稱: arrives"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5113,19 +5370,23 @@
     },
     "derivatives": [],
     "synonyms": [
-      "come",
       "get",
+      "come",
+      "make it",
       "get in",
-      "go far",
-      "make it"
+      "go far"
     ],
     "antonyms": [
-      "leave"
-    ],
-    "confusables": [
       "leave",
       "go away",
       "go forth"
+    ],
+    "confusables": [
+      "depart",
+      "discover",
+      "arrest",
+      "destination",
+      "find"
     ],
     "affix_info": {
       "prefix": "",
@@ -5148,9 +5409,7 @@
     "example_translation": "她在大學學習藝術。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: arts"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5159,14 +5418,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "artistic creation",
-      "artistic production",
+      "prowess",
       "artistry",
       "artwork",
-      "fine art"
+      "artistic creation",
+      "superior skill"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "deco",
+      "nouveau",
+      "gallery",
+      "curated",
+      "curator"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5188,9 +5453,7 @@
     "example_translation": "這位藝術家畫了一幅美麗的風景畫。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: artists"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5202,13 +5465,19 @@
       "creative person"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "illustrator",
+      "sculptor",
+      "painter",
+      "curator",
+      "painting"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
-      "suffix": "",
-      "meaning": "",
-      "example": ""
+      "suffix": "-ist",
+      "meaning": "person who practices (從事某事者)",
+      "example": "artist (藝術家), biologist (生物學家), pianist (鋼琴家), specialist (專家), scientist (科學家)"
     },
     "id": 122
   },
@@ -5233,10 +5502,10 @@
     },
     "derivatives": [],
     "synonyms": [
-      "A",
-      "American Samoa",
-      "Eastern Samoa",
-      "adenine"
+      "equally",
+      "arsenic",
+      "every bit",
+      "atomic number 33"
     ],
     "antonyms": [],
     "confusables": [],
@@ -5261,12 +5530,7 @@
     "example_translation": "她問了我一個問題。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: asked",
-      "過去分詞: asked",
-      "現在分詞: asking",
-      "第三人稱: asks"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5275,19 +5539,23 @@
     },
     "derivatives": [],
     "synonyms": [
-      "call for",
+      "inquire",
+      "necessitate",
       "demand",
-      "enquire",
-      "expect",
-      "inquire"
+      "pose",
+      "need"
     ],
     "antonyms": [
-      "obviate"
-    ],
-    "confusables": [
       "obviate",
       "eliminate",
       "rid of"
+    ],
+    "confusables": [
+      "forgiveness",
+      "questions",
+      "timeline",
+      "answers",
+      "inflation"
     ],
     "affix_info": {
       "prefix": "",
@@ -5319,16 +5587,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "at peace",
-      "at rest",
       "benumbed",
+      "numb",
       "deceased",
-      "departed"
+      "departed",
+      "at peace"
     ],
-    "antonyms": [
+    "antonyms": [],
+    "confusables": [
+      "woken",
+      "woke",
+      "awoken",
+      "awoke",
       "awake"
     ],
-    "confusables": [],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5350,9 +5622,7 @@
     "example_translation": "教授的助手協助進行了研究。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: assistants"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5361,12 +5631,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "help",
-      "helper",
-      "supporter"
+      "subordinate",
+      "adjunct",
+      "supporter",
+      "low-level",
+      "help"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "coach",
+      "adjutant",
+      "attorney",
+      "professor",
+      "secretary"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5388,12 +5666,7 @@
     "example_translation": "讓我們假設明天會下雨。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: assumed",
-      "過去分詞: assumed",
-      "現在分詞: assuming",
-      "第三人稱: assumes"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5402,14 +5675,20 @@
     },
     "derivatives": [],
     "synonyms": [
-      "accept",
-      "acquire",
-      "adopt",
       "arrogate",
-      "bear"
+      "acquire",
+      "sham",
+      "presume",
+      "take"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "responsibilities",
+      "responsibility",
+      "preferences",
+      "assumption",
+      "formula"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5424,16 +5703,14 @@
     "kk_phonetic": "/əˈstrɑnəmi/",
     "chinese_definition": "n. 天文學",
     "posTags": [
-      "noun"
+      "other"
     ],
     "theme": "core2000",
     "example_sentence": "Astronomy helps us understand the universe.",
     "example_translation": "天文學幫助我們了解宇宙。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: astronomies"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5445,7 +5722,13 @@
       "uranology"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "astrophysics",
+      "astronomical",
+      "astrology",
+      "observatory",
+      "geophysics"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5467,9 +5750,7 @@
     "example_translation": "這座城市正遭受攻擊。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: attacks"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5479,14 +5760,20 @@
     "derivatives": [],
     "synonyms": [
       "approach",
-      "attempt",
-      "blast",
-      "fire",
-      "flack"
+      "onslaught",
+      "assail",
+      "assault",
+      "blast"
     ],
-    "antonyms": [],
-    "confusables": [
+    "antonyms": [
       "defend"
+    ],
+    "confusables": [
+      "repulsed",
+      "pearl",
+      "flank",
+      "harbor",
+      "convoy"
     ],
     "affix_info": {
       "prefix": "",
@@ -5509,9 +5796,7 @@
     "example_translation": "注意聽我說的話。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: attentions"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5520,23 +5805,27 @@
     },
     "derivatives": [],
     "synonyms": [
-      "aid",
+      "tending",
       "attending",
-      "care",
-      "tending"
+      "aid",
+      "care"
     ],
     "antonyms": [
       "inattention"
     ],
     "confusables": [
-      "inattention"
+      "hyperactivity",
+      "detail",
+      "deficit",
+      "disorder",
+      "paid"
     ],
     "affix_info": {
       "prefix": "",
-      "root": "",
+      "root": "ten/tend",
       "suffix": "",
-      "meaning": "",
-      "example": ""
+      "meaning": "stretch, hold (伸展、持有)",
+      "example": "extend (延伸), tension (緊張), attention (注意), tendon (肌腱), contend (競爭)"
     },
     "id": 130
   },
@@ -5545,16 +5834,14 @@
     "kk_phonetic": "/ˈætɪˌtud/",
     "chinese_definition": "n. 態度",
     "posTags": [
-      "noun"
+      "other"
     ],
     "theme": "core2000",
     "example_sentence": "Having a positive attitude makes life easier.",
     "example_translation": "擁有積極的態度讓生活更輕鬆。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: attitudes"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5563,12 +5850,18 @@
     },
     "derivatives": [],
     "synonyms": [
-      "mental attitude",
       "position",
-      "posture"
+      "posture",
+      "mental attitude"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "toward",
+      "adjustment",
+      "towards",
+      "attitudes",
+      "spacecraft"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5590,9 +5883,7 @@
     "example_translation": "她的假期從八月開始。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: Augusts"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5601,10 +5892,18 @@
     },
     "derivatives": [],
     "synonyms": [
-      "Aug"
+      "noble",
+      "revered",
+      "grand",
+      "aug",
+      "honorable"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "politician",
+      "footballer",
+      "september"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5626,9 +5925,7 @@
     "example_translation": "我姑媽這個週末要來看我們。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: aunts"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5644,7 +5941,11 @@
       "uncle"
     ],
     "confusables": [
-      "uncle"
+      "nieces",
+      "dahlia",
+      "agatha",
+      "uncle",
+      "bam"
     ],
     "affix_info": {
       "prefix": "",
@@ -5667,9 +5968,7 @@
     "example_translation": "秋天樹葉變黃了。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: autumns"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5681,7 +5980,13 @@
       "fall"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "annals",
+      "winter",
+      "spring",
+      "harvest",
+      "stakes"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5712,15 +6017,21 @@
     },
     "derivatives": [],
     "synonyms": [
-      "uncommitted",
-      "usable",
-      "useable"
+      "free",
+      "open",
+      "forthcoming",
+      "easy",
+      "accessible"
     ],
     "antonyms": [
       "unavailable"
     ],
     "confusables": [
-      "unavailable"
+      "download",
+      "streaming",
+      "ios",
+      "android",
+      "amazon"
     ],
     "affix_info": {
       "prefix": "",
@@ -5743,12 +6054,7 @@
     "example_translation": "你應該避免吃太多糖。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "過去式: avoided",
-      "過去分詞: avoided",
-      "現在分詞: avoiding",
-      "第三人稱: avoids"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5757,22 +6063,25 @@
     },
     "derivatives": [],
     "synonyms": [
-      "annul",
-      "avert",
-      "debar",
+      "void",
+      "obviate",
+      "nullify",
       "deflect",
-      "fend off"
+      "avert"
     ],
     "antonyms": [
-      "confront",
-      "validate"
-    ],
-    "confusables": [
       "face",
       "validate",
       "confront",
       "formalize",
       "face up"
+    ],
+    "confusables": [
+      "confusion",
+      "relegation",
+      "detection",
+      "unnecessary",
+      "collision"
     ],
     "affix_info": {
       "prefix": "",
@@ -5804,14 +6113,20 @@
     },
     "derivatives": [],
     "synonyms": [
+      "outside",
+      "out",
       "aside",
-      "by",
-      "forth",
       "off",
-      "out"
+      "departed"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "exporter",
+      "aggregate",
+      "nearest",
+      "kit",
+      "draw"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5833,9 +6148,7 @@
     "example_translation": "嬰兒睡得很香。",
     "example_sentence_2": "",
     "example_translation_2": "",
-    "word_forms": [
-      "複數: babies"
-    ],
+    "word_forms": [],
     "word_forms_detail": {
       "base": [],
       "idiom": [],
@@ -5844,13 +6157,20 @@
     },
     "derivatives": [],
     "synonyms": [
+      "indulge",
+      "new",
       "babe",
-      "child",
-      "infant",
-      "sister"
+      "cosset",
+      "infantile"
     ],
     "antonyms": [],
-    "confusables": [],
+    "confusables": [
+      "boomer",
+      "babies",
+      "doll",
+      "crying",
+      "shower"
+    ],
     "affix_info": {
       "prefix": "",
       "root": "",
@@ -5921,6 +6241,103 @@
         return `這是${isZh ? '' : '一個'}${zh}。`;
       };
       
+      const posLabelFromArray = (tags = []) => {
+        return (Array.isArray(tags) ? tags : [])
+          .map((tag) => POS_LABEL[tag] || tag)
+          .filter(Boolean)
+          .join('、');
+      };
+
+      const wordToMarkdown = (word, selPos, extras = {}) => {
+        if (!word) return '';
+        const sections = extras.sections || { pos: true, relations: true, affix: true };
+        const lines = [];
+        const heading = (extras.title ?? word.english_word ?? '').trim();
+        if (heading) {
+          lines.push(`## ${heading}`);
+        }
+
+        const basicLines = [];
+        const kk = (extras.kk_phonetic ?? word.kk_phonetic ?? '').trim();
+        if (kk) basicLines.push(`- KK音標：${kk}`);
+        const posText = posLabelFromArray(word.posTags || []);
+        if (posText) basicLines.push(`- 詞性：${posText}`);
+        const themeLabel = THEME_LABEL[word.theme] || word.theme;
+        if (themeLabel) basicLines.push(`- 主題：${themeLabel}`);
+        if (basicLines.length) {
+          if (lines.length) lines.push('');
+          lines.push('### 基本資訊', ...basicLines);
+        }
+
+        const exampleLines = [];
+        const exampleSentence = (extras.example_sentence ?? word.example_sentence ?? '').trim();
+        const exampleTranslation = (extras.example_translation ?? word.example_translation ?? '').trim();
+        const exampleSentence2 = (extras.example_sentence_2 ?? word.example_sentence_2 ?? '').trim();
+        const exampleTranslation2 = (extras.example_translation_2 ?? word.example_translation_2 ?? '').trim();
+        if (exampleSentence) exampleLines.push(`- 例句1：${exampleSentence}`);
+        if (exampleTranslation) exampleLines.push(`  → ${exampleTranslation}`);
+        if (exampleSentence2) exampleLines.push(`- 例句2：${exampleSentence2}`);
+        if (exampleTranslation2) exampleLines.push(`  → ${exampleTranslation2}`);
+        if (exampleLines.length) {
+          lines.push('', '### 例句', ...exampleLines);
+        }
+
+        if (sections.pos) {
+          const grammarLines = [];
+          const primaryPos = selPos || word.grammar_main_category || (word.posTags || [])[0];
+          if (primaryPos) grammarLines.push(`- 主要詞性：${POS_LABEL[primaryPos] || primaryPos}`);
+          const subCat = (extras.grammar_sub_category ?? word.grammar_sub_category ?? '').trim();
+          if (subCat) grammarLines.push(`- 子分類：${subCat}`);
+          const gFunc = (extras.grammar_function ?? word.grammar_function ?? '').trim();
+          if (gFunc) grammarLines.push(`- 語法功能：${gFunc}`);
+          const gPattern = (extras.applicable_sentence_pattern ?? word.applicable_sentence_pattern ?? '').trim();
+          if (gPattern) grammarLines.push(`- 常見句型：${gPattern}`);
+          const formsSource = extras.word_forms ?? word.word_forms ?? [];
+          const formsList = Array.isArray(formsSource) ? formsSource : multiSplit(formsSource || '');
+          const cleanedForms = formsList.filter(Boolean);
+          if (cleanedForms.length) grammarLines.push(`- 詞形變化：${cleanedForms.join('、')}`);
+          if (grammarLines.length) {
+            lines.push('', '### 詞性', ...grammarLines);
+          }
+        }
+
+        if (sections.relations) {
+          const relationLines = [];
+          const synonyms = extras.synonyms ?? word.synonyms ?? [];
+          const synList = Array.isArray(synonyms) ? synonyms : multiSplit(synonyms || '');
+          if (synList.length) relationLines.push(`- 同義字：${synList.join('、')}`);
+          const antonyms = extras.antonyms ?? word.antonyms ?? [];
+          const antList = Array.isArray(antonyms) ? antonyms : multiSplit(antonyms || '');
+          if (antList.length) relationLines.push(`- 反義字：${antList.join('、')}`);
+          const confusables = extras.confusables ?? word.confusables ?? [];
+          const confList = Array.isArray(confusables) ? confusables : multiSplit(confusables || '');
+          if (confList.length) relationLines.push(`- 易混淆字：${confList.join('、')}`);
+          if (relationLines.length) {
+            lines.push('', '### 同義／反義／易混淆', ...relationLines);
+          }
+        }
+
+        if (sections.affix) {
+          const affix = extras.affix_info ?? word.affix_info ?? {};
+          const affixLines = [];
+          const prefix = String(affix.prefix || '').trim();
+          const root = String(affix.root || '').trim();
+          const suffix = String(affix.suffix || '').trim();
+          const meaning = String(affix.meaning || '').trim();
+          const example = String(affix.example || '').trim();
+          if (prefix) affixLines.push(`- 字首：${prefix}`);
+          if (root) affixLines.push(`- 字根：${root}`);
+          if (suffix) affixLines.push(`- 字尾：${suffix}`);
+          if (meaning) affixLines.push(`- 字源意涵：${meaning}`);
+          if (example) affixLines.push(`- 延伸例子：${example}`);
+          if (affixLines.length) {
+            lines.push('', '### 字根字首字尾', ...affixLines);
+          }
+        }
+
+        return lines.join('\n');
+      };
+
       const makeBaseDataset = () => INITIAL_DATASET;
 
       const normalizePOS = (raw) => {
@@ -6642,12 +7059,17 @@
         const [mdPreview, setMdPreview] = useState('');
         const [mdStatus, setMdStatus] = useState('');
         const [showMdPreview, setShowMdPreview] = useState(false);
+        const [exportSections, setExportSections] = useState({ pos: true, relations: true, affix: true });
 
         useEffect(() => {
           setMdStatus('');
           setShowMdPreview(false);
           setMdPreview('');
         }, [selPos, word?.id]);
+
+        useEffect(() => {
+          setExportSections({ pos: true, relations: true, affix: true });
+        }, [word?.id]);
 
         useEffect(() => {
           if (!word) return;
@@ -6727,7 +7149,9 @@
             derivatives: word.derivatives,
             synonyms: word.synonyms,
             antonyms: word.antonyms,
-            confusables: word.confusables
+            confusables: word.confusables,
+            affix_info: word.affix_info,
+            sections: exportSections
           });
           setMdPreview(md);
           if (!md || !md.trim()) {
@@ -6764,9 +7188,19 @@
           const useFallback = card.allowFallback && !card.en;
           const enText = card.en || (useFallback ? fallbackExample : '');
           const zhText = card.zh || (useFallback ? fallbackTranslation : '');
+          const speakText = enText;
           return (
             <div key={`example-${idx}`} className="rounded-2xl bg-indigo-50 px-4 py-3">
-              <div className="text-base text-gray-900 whitespace-pre-wrap">{enText || ' '}</div>
+              <div className="flex items-start gap-2">
+                <div className="flex-1 text-base text-gray-900 whitespace-pre-wrap">{enText || ' '}</div>
+                {speakText ? (
+                  <SpeakerButton
+                    onClick={() => speak(speakText)}
+                    label={`播放例句 ${idx + 1} 發音`}
+                    className="mt-0.5"
+                  />
+                ) : null}
+              </div>
               <div className="mt-2 text-sm text-indigo-800 whitespace-pre-wrap">{zhText || ' '}</div>
               {useFallback && (
                 <div className="mt-2 text-xs text-gray-500">（系統預設例句，尚未補入原始資料）</div>
@@ -6783,6 +7217,10 @@
           </div>
         );
 
+        const toggleExportSection = (key) => {
+          setExportSections((prev) => ({ ...prev, [key]: !prev[key] }));
+        };
+
         return (
           <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -6792,13 +7230,15 @@
               </div>
               <div className="flex gap-2">
                 <Button variant={isFav ? 'danger' : 'primary'} onClick={() => favoritesApi.toggle(word.id)}>{isFav ? '移除最愛' : '加入最愛'}</Button>
-                <Button variant="ghost" onClick={() => speak(word.english_word)}>發音</Button>
               </div>
             </div>
 
             <div className="rounded-3xl border border-gray-200 bg-white/90 p-6 shadow-sm space-y-6">
               <div>
-                <h1 className="text-4xl font-bold text-gray-900">{word.english_word}</h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-4xl font-bold text-gray-900">{word.english_word}</h1>
+                  <SpeakerButton label="播放單字發音" onClick={() => speak(word.english_word)} />
+                </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-gray-600">
                   <span className="rounded-full bg-indigo-50 px-3 py-1 text-indigo-600">{POS_LABEL[selPos] || selPos}</span>
                   <span className="rounded-full bg-gray-100 px-3 py-1 text-gray-600">{themeText}</span>
@@ -6914,6 +7354,27 @@
                   </div>
                 </section>
               ) : null}
+            </div>
+
+            <div className="rounded-2xl border border-gray-200 bg-white/80 p-4">
+              <div className="text-sm font-semibold text-gray-600 mb-3">匯出內容</div>
+              <div className="flex flex-wrap gap-4 text-sm text-gray-700">
+                {[
+                  { key: 'pos', label: '詞性區塊' },
+                  { key: 'relations', label: '同義／反義／易混淆' },
+                  { key: 'affix', label: '字根字首字尾' }
+                ].map((opt) => (
+                  <label key={opt.key} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={!!exportSections[opt.key]}
+                      onChange={() => toggleExportSection(opt.key)}
+                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span>{opt.label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
